@@ -15,8 +15,15 @@ class MyProfileScreen extends StatefulWidget {
 }
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
+  String customerimage = "";
+  String customerMobile = "";
   String customerName = "";
   String customerEmail = "";
+  String dateofBirth = "";
+  String customerGender = "";
+  String customerAddress = "";
+  String customerResidancialArea = "";
+  String customerPincode = "";
   String customerAbout = "";
 
   @override
@@ -57,7 +64,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 setState(() {
                   Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => const DashBoardScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => const DashBoardScreen()),
                     (route) => false,
                   );
                 });
@@ -87,6 +95,22 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             text: getEmail,
             onChanged: (email) {
               customerEmail = email;
+            },
+          ),
+          const SizedBox(height: 15),
+          TextFieldWidget(
+            label: "Phone No.",
+            text: getPhone,
+            onChanged: (phone) {
+              customerEmail = phone;
+            },
+          ),
+          const SizedBox(height: 15),
+          TextFieldWidget(
+            label: "Phone No.",
+            text: getPhone,
+            onChanged: (phone) {
+              customerEmail = phone;
             },
           ),
           const SizedBox(height: 15),

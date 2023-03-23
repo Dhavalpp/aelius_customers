@@ -1,5 +1,6 @@
-import '../models/electrician_services_provider_model.dart';
 import 'package:flutter/material.dart';
+
+import '../models/electrician_services_provider_model.dart';
 
 List<ElectricainServiceModel> electricainserviceProviders = getServices();
 

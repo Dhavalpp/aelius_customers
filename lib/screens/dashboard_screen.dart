@@ -1,11 +1,11 @@
 import 'package:aelius_customer/screens/reward_point_screen.dart';
 import 'package:aelius_customer/screens/sign_in_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
+
+import '../custom_widget/space.dart';
 import '../fragments/bookings_fragment.dart';
 import '../fragments/home.dart';
 import '../fragments/search_fragment.dart';
-import '../custom_widget/space.dart';
 import '../main.dart';
 import '../models/customer_details_model.dart';
 import '../utils/colors.dart';
@@ -114,23 +114,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => const NotificationScreen()),
-                  );
-                },
-              ),
-              Observer(
-                builder: (context) {
-                  return Padding(
-                    padding:const EdgeInsets.all(10.0),
-                    child: Switch(
-                      inactiveThumbColor: Colors.black,
-                      activeColor: Colors.white,
-                      value: appData.isDark,
-                      onChanged: (value) {
-                        setState(() {
-                          appData.toggle();
-                        });
-                      },
-                    ),
                   );
                 },
               ),

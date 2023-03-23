@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
+
+// import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
 
 import '../custom_widget/space.dart';
 import '../main.dart';
@@ -40,8 +42,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   @override
   void initState() {
     super.initState();
-    _getSignatureCode();
-    _startListeningSms();
+    // _getSignatureCode();
+    // _startListeningSms();
   }
 
   @override
@@ -57,22 +59,22 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         color: Colors.black12);
   }
 
-   // get signature code
-  _getSignatureCode() async {
-    String? signature = await SmsVerification.getAppSignature();
-    print("signature $signature");
-  }
+  // get signature code
+  // _getSignatureCode() async {
+  //   String? signature = await SmsVerification.getAppSignature();
+  //   print("signature $signature");
+  // }
 
-  // / listen sms
-  _startListeningSms() {
-    SmsVerification.startListeningSms().then((message) {
-      setState(() {
-        _otpCode = SmsVerification.getCode(message, intRegex);
-        widget.smsController.text = _otpCode!;
-        _onOtpCallBack(_otpCode!, true);
-      });
-    });
-  }
+  // // / listen sms
+  // _startListeningSms() {
+  //   SmsVerification.startListeningSms().then((message) {
+  //     setState(() {
+  //       _otpCode = SmsVerification.getCode(message, intRegex);
+  //       widget.smsController.text = _otpCode!;
+  //       _onOtpCallBack(_otpCode!, true);
+  //     });
+  //   });
+  // }
 
   _onSubmitOtp() {
     setState(() {
@@ -81,9 +83,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     });
   }
 
-  _onClickRetry() {
-    _startListeningSms();
-  }
+  // _onClickRetry() {
+  //   _startListeningSms();
+  // }
 
   _onOtpCallBack(String otpCode, bool isAutofill) {
     setState(() {
@@ -181,24 +183,24 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  TextFieldPin(
-                      textController: widget.smsController,
-                      autoFocus: true,
-                      codeLength: _otpCodeLength,
-                      alignment: MainAxisAlignment.center,
-                      defaultBoxSize: 46.0,
-                      margin: 3,
-                      selectedBoxSize: 46.0,
-                      textStyle: const TextStyle(fontSize: 16),
-                      defaultDecoration: _pinPutDecoration.copyWith(
-                          border: Border.all(
-                              color: Theme.of(context)
-                                  .primaryColor
-                                  .withOpacity(0.8))),
-                      selectedDecoration: _pinPutDecoration,
-                      onChange: (code) {
-                        _onOtpCallBack(code, false);
-                      }),
+                  // TextFieldPin(
+                  //     textController: widget.smsController,
+                  //     autoFocus: true,
+                  //     codeLength: _otpCodeLength,
+                  //     alignment: MainAxisAlignment.center,
+                  //     defaultBoxSize: 46.0,
+                  //     margin: 3,
+                  //     selectedBoxSize: 46.0,
+                  //     textStyle: const TextStyle(fontSize: 16),
+                  //     defaultDecoration: _pinPutDecoration.copyWith(
+                  //         border: Border.all(
+                  //             color: Theme.of(context)
+                  //                 .primaryColor
+                  //                 .withOpacity(0.8))),
+                  //     selectedDecoration: _pinPutDecoration,
+                  //     onChange: (code) {
+                  //       _onOtpCallBack(code, false);
+                  //     }),
                   const Space(40),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

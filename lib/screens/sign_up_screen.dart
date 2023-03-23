@@ -1,20 +1,21 @@
 // import 'package:country_calling_code_picker/picker.dart';
 import 'dart:io';
+
 import 'package:aelius_customer/screens/sign_in_screen.dart';
+import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
+
 import '../custom_widget/drop_down_menu.dart';
 import '../custom_widget/space.dart';
 import '../main.dart';
 import '../utils/colors.dart';
-import 'package:image_picker/image_picker.dart';
-
 import '../utils/constant.dart';
 import '../utils/images.dart';
 import '../utils/widget.dart';
 import 'otp_verification_screen.dart';
-
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -31,6 +32,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _companyController = TextEditingController();
+
   // final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _confirmPassController = TextEditingController();
@@ -60,6 +62,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   String selectedValue = "IT";
 
+  String countryCodeText = "+91";
+
+  final countryPicker = const FlCountryCodePicker();
+  final countryPickerWithParams = const FlCountryCodePicker(
+    showDialCode: true,
+    showSearchBar: true,
+  );
+
   @override
   void dispose() {
     _passController.dispose();
@@ -72,7 +82,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     // initCountry();
     super.initState();
   }
-
 
   bool checkPhoneNumber(String phoneNumber) {
     String regexPattern = r'^(?:[+0][1-9])?[0-9]{10,12}$';
@@ -118,10 +127,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         return Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[            
+          children: <Widget>[
             SettingItemWidget(
               title: "Gallery",
-              leading:const Icon(Icons.image, color: primaryColor),
+              leading: const Icon(Icons.image, color: primaryColor),
               onTap: () {
                 _getFromGallery();
                 finish(context);
@@ -130,7 +139,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             const Divider(),
             SettingItemWidget(
               title: "camera",
-              leading:const Icon(Icons.camera, color: primaryColor),
+              leading: const Icon(Icons.camera, color: primaryColor),
               onTap: () {
                 _getFromCamera();
                 finish(context);
@@ -141,7 +150,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       },
     );
   }
-
 
   // Future<void> _verifyPhoneNumber() async {
   //   final PhoneVerificationCompleted verificationCompleted =
@@ -195,12 +203,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         return AlertDialog(
           title: const Text('Alert'),
           content: SingleChildScrollView(
-            child: ListBody(
-                children: const [Text('Please agree the terms and conditions')]),
+            child: ListBody(children: const [
+              Text('Please agree the terms and conditions')
+            ]),
           ),
           actions: [
             TextButton(
-              child:const Text('Ok'),
+              child: const Text('Ok'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -235,42 +244,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const Space(30),
               Center(
                 child: Stack(
-                children: [
-                  Container(
-                    decoration: boxDecorationDefault(
-                      border: Border.all(color: context.scaffoldBackgroundColor, width: 4),
-                      shape: BoxShape.circle,
-                    ),
-                    child: SizedBox(
-                      height: 150,width: 150,
-                      child: imageFile != null
-                          ? Image.file(
-                              imageFile!,
-                              width: 150,
-                              height: 150,
-                              fit: BoxFit.cover,
-                            ).cornerRadiusWithClipRRect(100)
-                          :const CircleAvatar(backgroundImage: AssetImage(userImage),
-                           ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 4,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: boxDecorationWithRoundedCorners(
-                        boxShape: BoxShape.circle,
-                        backgroundColor: primaryColor,
-                        border: Border.all(color: Colors.white),
+                  children: [
+                    Container(
+                      decoration: boxDecorationDefault(
+                        border: Border.all(
+                            color: context.scaffoldBackgroundColor, width: 4),
+                        shape: BoxShape.circle,
                       ),
-                      child:const Icon(Icons.camera, color: Colors.white, size: 25),
-                    ).onTap(() async {
-                      _showBottomSheet(context);
-                    }),
-                  )
-                ],
-              ),
+                      child: SizedBox(
+                        height: 150,
+                        width: 150,
+                        child: imageFile != null
+                            ? Image.file(
+                                imageFile!,
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.cover,
+                              ).cornerRadiusWithClipRRect(100)
+                            : const CircleAvatar(
+                                backgroundImage: AssetImage(userImage),
+                              ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 4,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: boxDecorationWithRoundedCorners(
+                          boxShape: BoxShape.circle,
+                          backgroundColor: primaryColor,
+                          border: Border.all(color: Colors.white),
+                        ),
+                        child: const Icon(Icons.camera,
+                            color: Colors.white, size: 25),
+                      ).onTap(() async {
+                        _showBottomSheet(context);
+                      }),
+                    )
+                  ],
+                ),
               ),
               const Space(16),
               Form(
@@ -282,7 +295,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: _nameController,
                       keyboardType: TextInputType.name,
                       textInputAction: TextInputAction.next,
-                      style:const TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                       decoration: commonInputDecoration(hintText: "Name"),
                     ),
                     const Space(16),
@@ -299,59 +312,86 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       keyboardType: TextInputType.phone,
                       textInputAction: TextInputAction.next,
                       inputFormatters: [LengthLimitingTextInputFormatter(10)],
-                      style: const TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 20),
                       decoration: commonInputDecoration(
-                        hintText: "Enter mobile number",
-                        // prefixIcon: Padding(
-                        //   padding: EdgeInsets.all(16),
-                        //   child: GestureDetector(
-                        //     // onTap: () => _showCountryPicker(),
-                        //     child: Container(),
-                        //  Text(
-                        //     _selectedCountry == null
-                        //          ? "+91"
-                        //         : _selectedCountry!.callingCode,
-                        //     style: TextStyle(
-                        //       fontWeight: FontWeight.bold, fontSize: 16),
-                        // ),
-                        //   ),
-                        // ),
-                      ),
-                    ),
-
-
-                    const Space(16),
-
-                    backContainer(   Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Date of Birth",
-                          style: TextStyle(
-                            color: Colors.black,fontWeight: FontWeight.bold
+                        hintText: "Mobile number",
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.only(right: 10),
+                          child: GestureDetector(
+                            onTap: () async {
+                              final code = await countryPicker.showPicker(
+                                context: context,
+                              );
+                              if (code != null)
+                                setState(() {
+                                  countryCodeText = code.dialCode;
+                                });
+                              // print(code.flagImage);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 5.0),
+                              // margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                              decoration: const BoxDecoration(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(30),
+                                    bottomLeft: Radius.circular(30),
+                                  )),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(countryCodeText,
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16)),
+                              ),
+                            ),
                           ),
                         ),
-                        TextButton(onPressed: _selectDate, child: Container(padding: const EdgeInsets.all(10),decoration: BoxDecoration(color: Colors.grey.shade400,borderRadius: BorderRadius.circular(5.0)),child: const Text("Select Date")),)                   //     ElevatedButton(
-                    // 
-                      ],
-                    ),),
+                      ),
+                    ),
                     const Space(16),
-                     backContainer(Row(
+                    backContainer(
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Date of Birth",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          TextButton(
+                            onPressed: _selectDate,
+                            child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    color: Colors.grey.shade400,
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                child: const Text("Select Date")),
+                          )
+                          //     ElevatedButton(
+                          //
+                        ],
+                      ),
+                    ),
+                    const Space(16),
+                    backContainer(Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const[
-                         Text(
+                      children: const [
+                        Text(
                           "Gender",
-                          style: TextStyle(fontWeight: FontWeight.bold,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
                         ),
                         DropDownMenu(gender: true),
                       ],
                     )),
-
-
                     const Space(16),
                     TextFormField(
                       // maxLines: 3,
@@ -360,48 +400,48 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.visiblePassword,
                       obscureText: _securePassword,
-                      style:const TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20),
                       decoration: commonInputDecoration(
                         hintText: "Residence Address",
                       ),
                     ),
                     const Space(16),
-                    backContainer( Row(
+                    backContainer(
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children:const [
-                        Text(
-                          "Area of Residence",
-                          style: TextStyle(fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          Text(
+                            "Area of Residence",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                        DropDownMenu(gender: false),
-                      ],
+                          DropDownMenu(gender: false),
+                        ],
+                      ),
                     ),
-                   ),
                     const Space(16),
                     TextFormField(
                       controller: _refralCode,
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.next,
-                      style:const TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20),
                       decoration:
                           commonInputDecoration(hintText: "Refral Code"),
                     ),
-
-
                     const Space(16),
                     Theme(
                       data: ThemeData(
                           unselectedWidgetColor:
                               appData.isDark ? Colors.white : Colors.black),
                       child: CheckboxListTile(
-                        contentPadding:const EdgeInsets.all(0),
+                        contentPadding: const EdgeInsets.all(0),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5)),
                         activeColor: Colors.black,
-                        title:const Text("I agree to the Terms and Conditions",
+                        title: const Text("I agree to the Terms and Conditions",
                             style: TextStyle(fontWeight: FontWeight.normal)),
                         value: agreeWithTeams,
                         dense: true,
@@ -418,9 +458,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          padding:const EdgeInsets.all(16),
-                          textStyle:const TextStyle(fontSize: 25),
-                          shape:const StadiumBorder(),
+                          padding: const EdgeInsets.all(16),
+                          textStyle: const TextStyle(fontSize: 25),
+                          shape: const StadiumBorder(),
                           backgroundColor: appData.isDark
                               ? Colors.grey.withOpacity(0.2)
                               : Colors.black,
@@ -443,7 +483,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             }
                           }
                         },
-                        child:const Text("Sign Up",
+                        child: const Text("Sign Up",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -462,7 +502,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const [
                           Text("Have an account?",
-                              style:TextStyle(fontSize: 16)),
+                              style: TextStyle(fontSize: 16)),
                           Space(4),
                           Text('Sign In',
                               style: TextStyle(
@@ -480,8 +520,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
- 
-
   Future<void> _selectDate() async {
     final pickedDate = await showDatePicker(
         context: context,
@@ -495,13 +533,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-  Container backContainer( Row rowcontainer, ){
-    return Container(height: 50,width: double.infinity,decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(30),color: Colors.grey.shade200
-    ),child: Padding(
-      padding: const EdgeInsets.only(right: 20.0,left: 20.0),
-      child: rowcontainer,
-    ),);
+  Container backContainer(
+    Row rowcontainer,
+  ) {
+    return Container(
+      height: 50,
+      width: double.infinity,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30), color: Colors.grey.shade200),
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20.0, left: 20.0),
+        child: rowcontainer,
+      ),
+    );
   }
-
 }

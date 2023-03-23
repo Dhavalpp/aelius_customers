@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:aelius_customer/screens/provider_detail_screen.dart';
+import 'package:flutter/material.dart';
+
 import '../custom_widget/service_request_dialog_with_category.dart';
 import '../custom_widget/space.dart';
 import '../main.dart';

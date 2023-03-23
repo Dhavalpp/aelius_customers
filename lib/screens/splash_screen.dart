@@ -1,5 +1,8 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+
+import '../services/notification_services.dart';
 import '../utils/images.dart';
 import 'banner_screen.dart';
 
@@ -11,16 +14,25 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  NotificationServices notificationServices = NotificationServices();
+
   @override
   void initState() {
     super.initState();
+    notificationServices.requestNotificationPermission();
+    notificationServices.firebaseInit(context);
+    notificationServices.getDeviceToken().then((value) {
+      print('device token');
+      print(value);
+    });
+
     init();
   }
 
   void init() async {
     Timer(
       const Duration(seconds: 2),
-      () {
+          () {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const BannerScreen()),

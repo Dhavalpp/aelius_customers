@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
+
 import '../custom_widget/service_request_dialog_with_category.dart';
 import '../main.dart';
-import 'dart:async';
 
 class NewServicesRequestDialog extends StatefulWidget {
   const NewServicesRequestDialog
@@ -59,19 +59,9 @@ class _NewServicesRequestDialogState extends State<NewServicesRequestDialog> {
                     onPressed: () {
                       showDialog(
                         context: context,
-                        builder: (context) =>
-                          _immediateDialog(context),
-
+                        builder: (context) => immediateDialog(context),
                       );
                     },
-                    child: Container(
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.deepOrange.shade300,
-                      ),
-                      child: btnText("Immediately", 15.0),
-                    ),
                   ),
                   // Divider(height: 2,color: Colors.blueAccent),
                   MaterialButton(
@@ -108,7 +98,7 @@ class _NewServicesRequestDialogState extends State<NewServicesRequestDialog> {
     );
   }
 
-  Dialog _immediateDialog(BuildContext context) {
+   Dialog immediateDialog(BuildContext context) {
     // Navigator.pop(context);
     return Dialog(
       elevation: 0,
@@ -116,21 +106,22 @@ class _NewServicesRequestDialogState extends State<NewServicesRequestDialog> {
         height: 300,
         child: Padding(
           padding: const EdgeInsets.all(15.0),
-          child: Column(children: [
-            if(!_isAccepted)
-              Column(
-                children: [
-                  Text("You are scheduling service request for... ",
-                      style: TextStyle(
-                        color: appData.isDark ? Colors.white : Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      )),
-                  Container(
-                      decoration: const BoxDecoration(),
-                      child:  DropdownButton(
-                        value: _selectedcategoryItem,
-                        items: _dropDowncategoryItems
+          child: Column(
+            children: [
+              if (!_isAccepted)
+                Column(
+                  children: [
+                    Text("You are scheduling service request for... ",
+                        style: TextStyle(
+                          color: appData.isDark ? Colors.white : Colors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        )),
+                    Container(
+                        decoration: const BoxDecoration(),
+                        child: DropdownButton(
+                          value: _selectedcategoryItem,
+                          items: _dropDowncategoryItems
                             .map((item) => DropdownMenuItem(
                           value: item,
                           child: Text(item),

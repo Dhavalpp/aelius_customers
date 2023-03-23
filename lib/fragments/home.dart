@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
 import '../components/home_contruction_component.dart';
 import '../components/room_service_component.dart';
 import '../custom_widget/new_services_request_dialog.dart';
+import '../custom_widget/service_request_dialog_with_category.dart';
 import '../custom_widget/space.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../main.dart';
-import '../screens/my_profile_screen.dart';
 import '../screens/reward_point_screen.dart';
 import '../utils/images.dart';
 import '../utils/widget.dart';
@@ -44,21 +45,6 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Form(
-                child: TextFormField(
-                  keyboardType: TextInputType.name,
-                  style: const TextStyle(fontSize: 17),
-                  decoration: commonInputDecoration(
-                    suffixIcon: Icon(Icons.search,
-                        size: 20,
-                        color: appData.isDark ? Colors.white : Colors.black),
-                    hintText: "Search for services",
-                  ),
-                ),
-              ),
-            ),
             SizedBox(
               height: 170,
               child: PageView.builder(
@@ -95,8 +81,8 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  iconSizebox(icprofile, "My Profile", 0),
-                  iconSizebox(icservices, "Services Request", 1),
+                  iconSizebox(icprofile, "Immediate Services", 0),
+                  iconSizebox(icservices, "Schedule Services", 1),
                   iconSizebox(icreward, "Reward Point", 2)
                 ],
               ),
@@ -132,7 +118,7 @@ class _HomeState extends State<Home> {
               children: [
                 SizedBox(
                     height: screenHeight / 8,
-                    width: screenWidth / 5,
+                    width: screenWidth / 4,
                     child: Image.asset(
                       sizeicons,
                     )),
@@ -149,15 +135,16 @@ class _HomeState extends State<Home> {
           ),
           onTap: () {
             sizeid == 0
-                ? Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const MyProfileScreen()),
+                ? showDialog(
+                    context: context,
+                    builder: (context) => const NewServicesRequestDialog(),
                   )
                 : sizeid == 1
                     ? showDialog(
                         context: context,
-                        builder: (context) => const NewServicesRequestDialog(),
+                        builder: (context) => ServicesRequestDialogWithCategory(
+                          nearestser: false,
+                        ),
                       )
                     : Navigator.push(
                         context,

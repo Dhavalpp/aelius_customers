@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
-import '../utils/images.dart';
-import '../custom_widget/space.dart';
 
+import '../custom_widget/space.dart';
+import '../utils/images.dart';
 
 class NotificationMemberProfile extends StatefulWidget {
   int completed;

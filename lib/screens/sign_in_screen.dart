@@ -1,7 +1,8 @@
-// import 'package:country_calling_code_picker/picker.dart';
 import 'package:aelius_customer/screens/sign_up_screen.dart';
+import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../custom_widget/space.dart';
 import '../main.dart';
 import '../utils/colors.dart';
@@ -29,11 +30,21 @@ class _SignInScreenState extends State<SignInScreen> {
 
   String? verificationId;
 
+  String countryCodeText = "+91";
+
+  final countryPicker = const FlCountryCodePicker();
+  final countryPickerWithParams = const FlCountryCodePicker(
+    showDialCode: true,
+    showSearchBar: true,
+  );
+
   // Country? _selectedCountry;
 
   @override
   void initState() {
     initCountry();
+    countryCodeText;
+
     super.initState();
   }
 
@@ -55,30 +66,27 @@ class _SignInScreenState extends State<SignInScreen> {
     return false;
   }
 
+  //
   // Future<void> _verifyPhoneNumber() async {
-  //   final PhoneVerificationCompleted verificationCompleted =
-  //       (AuthCredential phoneAuthCredential) async {
+  //   verificationCompleted(AuthCredential phoneAuthCredential) async {
   //     await FirebaseAuth.instance.signInWithCredential(phoneAuthCredential);
-
-  //   };
-
-  //   final PhoneVerificationFailed verificationFailed =
-  //       (FirebaseAuthException authException) {
+  //
+  //   }
+  //
+  //   verificationFailed(FirebaseAuthException authException) {
   //     print(
   //         'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
-  //   };
-
-  //   final PhoneCodeSent codeSent =
-  //       (String verificationId, [int? forceResendingToken]) {
+  //   }
+  //
+  //   codeSent(String verificationId, [int? forceResendingToken]) {
   //     print('Please check your phone for the verification code.');
   //     this.verificationIds = verificationId;
-  //   };
-
-  //   final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
-  //       (String verificationId) {
+  //   }
+  //
+  //   codeAutoRetrievalTimeout(String verificationId) {
   //     this.verificationIds = verificationId;
-  //   };
-
+  //   }
+  //
   //   await _firebaseAuth.verifyPhoneNumber(
   //     phoneNumber: "+91" + mobileNumber.text,
   //     timeout: const Duration(seconds: 60),
@@ -88,15 +96,7 @@ class _SignInScreenState extends State<SignInScreen> {
   //     codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
   //   );
   // }
-
-  // void _showCountryPicker() async {
-  //   final country = await showCountryPickerSheet(context);
-  //   if (country != null) {
-  //     setState(() {
-  //       _selectedCountry = country;
-  //     });
-  //   }
-  // }
+  //
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +109,7 @@ class _SignInScreenState extends State<SignInScreen> {
               appData.isDark ? Brightness.light : Brightness.dark),
       child: Scaffold(
         body: SingleChildScrollView(
-          padding:const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -138,31 +138,52 @@ class _SignInScreenState extends State<SignInScreen> {
                 child: TextFormField(
                   controller: mobileNumber,
                   keyboardType: TextInputType.phone,
-                  style:const TextStyle(fontSize: 16),
-                  // validator: (value) {
-                  //   if (value == null) {
-                  //     return "Please Enter Your Phone Number";
-                  //   } else if (value.length > 10 || value.length < 10) {
-                  //     return "Please Enter Correct Mobile Number";
-                  //   }
-                  //   return null;
-                  // },
+                  style: TextStyle(fontSize: 16),
+                  validator: (value) {
+                    if (value == null) {
+                      return "Please Enter Your Phone Number";
+                    } else if (value.length > 10 || value.length < 10) {
+                      return "Please Enter Correct Mobile Number";
+                    }
+                    return null;
+                  },
                   inputFormatters: [LengthLimitingTextInputFormatter(10)],
                   decoration: commonInputDecoration(
                     hintText: "Enter mobile number",
-                    // prefixIcon: Padding(
-                    //   padding: EdgeInsets.all(16),
-                    //   child: GestureDetector(
-                    //     onTap: () => _showCountryPicker(),
-                    //     child: Text(
-                    //       _selectedCountry == null
-                    //           ? "+91"
-                    //           : _selectedCountry!.callingCode,
-                    //       style: TextStyle(
-                    //           fontWeight: FontWeight.bold, fontSize: 16),
-                    //     ),
-                    //   ),
-                    // ),
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.only(right: 10),
+                      child: GestureDetector(
+                        onTap: () async {
+                          final code = await countryPicker.showPicker(
+                            context: context,
+                          );
+                          if (code != null)
+                            setState(() {
+                              countryCodeText = code.dialCode;
+                            });
+                          // print(code.flagImage);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 5.0),
+                          // margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                          decoration: const BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(30),
+                                bottomLeft: Radius.circular(30),
+                              )),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(countryCodeText,
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16)),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -171,9 +192,9 @@ class _SignInScreenState extends State<SignInScreen> {
                 width: MediaQuery.of(context).size.width,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    padding:const EdgeInsets.all(16),
-                    textStyle:const TextStyle(fontSize: 16),
-                    shape:const StadiumBorder(),
+                    padding: const EdgeInsets.all(16),
+                    textStyle: const TextStyle(fontSize: 16),
+                    shape: const StadiumBorder(),
                     backgroundColor: appData.isDark
                         ? Colors.grey.withOpacity(0.2)
                         : Colors.black,
@@ -191,7 +212,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       );
                     }
                   },
-                  child:const Text("Log In",
+                  child: const Text("Log In",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -238,8 +259,10 @@ class _SignInScreenState extends State<SignInScreen> {
 
               GestureDetector(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const SignUpScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignUpScreen()));
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

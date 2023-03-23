@@ -1,25 +1,30 @@
-// import 'package:firebase_core/firebase_core.dart';
-import 'package:aelius_customer/screens/dashboard_screen.dart';
 import 'package:aelius_customer/screens/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+
 import 'components/my_scroll_behaviour.dart';
 import 'store/appData.dart';
 import 'utils/colors.dart';
 import 'utils/constant.dart';
 
-
 AppData appData = AppData();
 
-void main() async{
-//   WidgetsFlutterBinding.ensureInitialized();
-//   FirebaseApp app = await Firebase.initializeApp();
-//  assert(app != null);
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackground);
 //   SystemChrome.setPreferredOrientations(
 //       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
   runApp(const MyApp());
+}
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackground(RemoteMessage message) async {
+  await Firebase.initializeApp();
 }
 
 class MyApp extends StatelessWidget {
