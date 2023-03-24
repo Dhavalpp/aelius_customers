@@ -23,9 +23,14 @@ dependencies:
   firebase_messaging: ^14.2.5
   app_settings: ^4.2.0
   flutter_local_notifications: ^13.0.0
+
   #mobX
   mobx:
   flutter_mobx:
+
+
+  #shared_preferences
+  shared_preferences:
 
   nb_utils: ^5.0.0
   cached_network_image: ^3.2.3

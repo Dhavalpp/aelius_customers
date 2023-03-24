@@ -1,7 +1,5 @@
-import 'package:aelius_customer/screens/provider_detail_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../custom_widget/service_request_dialog_with_category.dart';
 import '../custom_widget/space.dart';
 import '../main.dart';
 import '../models/electrican_services_model.dart';
@@ -22,18 +20,18 @@ class ServiceProvidersScreen extends StatefulWidget {
 }
 
 class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
-  Future<void> _navigateToProviderDetailScreen(int index) async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            ProviderDetailScreen(serviceIndex: widget.index, index: index),
-      ),
-    );
-    if (result) {
-      setState(() {});
-    }
-  }
+  // Future<void> _navigateToProviderDetailScreen(int index) async {
+  //   final result = await Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) =>
+  //           ProviderDetailScreen(serviceIndex: widget.index, index: index),
+  //     ),
+  //   );
+  //   if (result) {
+  //     setState(() {});
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,34 +56,36 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Column(children: [
-              const Text(
-                "Don't Know about Any Service Men ?",
-                style: TextStyle(fontSize: 15),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => ServicesRequestDialogWithCategory(nearestser: true,
-                     
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                    shape:const StadiumBorder(),
-                    backgroundColor: appData.isDark
-                        ? Colors.grey.withOpacity(0.2)
-                        : Colors.black,
-                    padding: const EdgeInsets.only(
-                        left: 20, right: 20, top: 8, bottom: 8)),
-                child:const Text("Find Nearest",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white)),
-              ),
-            ]),
+            // Column(children: [
+            //   const Text(
+            //     "Don't Know about Any Service Men ?",
+            //     style: TextStyle(fontSize: 15),
+            //   ),
+            //   ElevatedButton(
+            //     onPressed: () {
+            //       showDialog(
+            //         context: context,
+            //         builder: (context) => ServicesRequestDialogWithCategory(nearestser: true,
+            //
+            //         ),
+            //       );
+            //     },
+            //     style: ElevatedButton.styleFrom(
+            //         shape:const StadiumBorder(),
+            //         backgroundColor: appData.isDark
+            //             ? Colors.grey.withOpacity(0.2)
+            //             : Colors.black,
+            //         padding: const EdgeInsets.only(
+            //             left: 20, right: 20, top: 8, bottom: 8)),
+            //     child:const Text("Find Nearest",
+            //         textAlign: TextAlign.center,
+            //         style: TextStyle(color: Colors.white)),
+            //   ),
+            // ]),
             ListView.builder(
-              padding:const  EdgeInsets.all(16),
+              scrollDirection: Axis.vertical,
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(16),
               shrinkWrap: true,
               itemCount: widget.servicesss == false
                   ? serviceProviders[widget.index].serviceProviders.length
@@ -95,7 +95,7 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    _navigateToProviderDetailScreen(index);
+                    // _navigateToProviderDetailScreen(index);
                   },
                   child: Container(
                     padding:const  EdgeInsets.all(16),
@@ -160,7 +160,7 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                                                 )
                                               : Image.asset(icHeart,
                                                   color: Colors.black)
-                                          :const  Icon(
+                                          : const Icon(
                                               Icons.favorite,
                                               size: 18,
                                               color: Colors.red,
@@ -193,7 +193,7 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     textAlign: TextAlign.start,
-                                    style:const  TextStyle(
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.w900,
                                         fontSize: 20),
                                   ),
@@ -210,7 +210,7 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     textAlign: TextAlign.start,
-                                    style:const  TextStyle(
+                                    style: const TextStyle(
                                         color: greyColor, fontSize: 14),
                                   ),
                                   const Space(4),
@@ -228,7 +228,7 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                                                 .electricainserviceProviders[
                                                     index]
                                                 .star,
-                                        style:const  TextStyle(
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
@@ -237,7 +237,6 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                                 ],
                               ),
                               const Space(16),
-                          
                             ],
                           ),
                         ),

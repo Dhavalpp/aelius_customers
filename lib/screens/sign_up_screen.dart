@@ -33,7 +33,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _companyController = TextEditingController();
 
-  // final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _confirmPassController = TextEditingController();
   final TextEditingController _bodController = TextEditingController();
@@ -322,10 +321,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               final code = await countryPicker.showPicker(
                                 context: context,
                               );
-                              if (code != null)
+                              if (code != null) {
                                 setState(() {
                                   countryCodeText = code.dialCode;
                                 });
+                              }
                               // print(code.flagImage);
                             },
                             child: Container(

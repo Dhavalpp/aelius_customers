@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'components/my_scroll_behaviour.dart';
@@ -18,13 +19,24 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackground);
 //   SystemChrome.setPreferredOrientations(
 //       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  // ...initialize settings...
+  await flutterLocalNotificationsPlugin.initialize(
+    const InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      // iOS: IOSInitializationSettings(),
+    ),
+  );
   runApp(const MyApp());
 }
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackground(RemoteMessage message) async {
   await Firebase.initializeApp();
+  print(message.notification!.title.toString());
+  print(message.notification!.body.toString());
+  print(message.data.toString());
 }
 
 class MyApp extends StatelessWidget {

@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../services/notification_services.dart';
 import '../utils/images.dart';
+import '../utils/shared_pref.dart';
 import 'banner_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -19,11 +21,16 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    SharedPref().getLogin();
     notificationServices.requestNotificationPermission();
     notificationServices.firebaseInit(context);
+    notificationServices.setupInteractMessage(context);
+    notificationServices.isTokenRefresh();
     notificationServices.getDeviceToken().then((value) {
-      print('device token');
-      print(value);
+      if (kDebugMode) {
+        print('device token');
+        print(value);
+      }
     });
 
     init();

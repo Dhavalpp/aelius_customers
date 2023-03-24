@@ -9,6 +9,7 @@ import '../fragments/search_fragment.dart';
 import '../main.dart';
 import '../models/customer_details_model.dart';
 import '../utils/colors.dart';
+import '../utils/shared_pref.dart';
 import '../utils/widget.dart';
 import 'favourite_services_screen.dart';
 import 'my_profile_screen.dart';
@@ -51,20 +52,20 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title:const Text(
+          title: const Text(
             'Are you sure you want to Logout?',
             textAlign: TextAlign.center,
             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
           ),
           actions: [
             TextButton(
-              child:const Text('No'),
+              child: const Text('No'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child:const Text('Yes'),
+              child: const Text('Yes'),
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
                   context,
@@ -86,7 +87,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           DateTime now = DateTime.now();
 
           if (_currentBackPressTime == null ||
-              now.difference(_currentBackPressTime!) >const  Duration(seconds: 2)) {
+              now.difference(_currentBackPressTime!) >
+                  const Duration(seconds: 2)) {
             _currentBackPressTime = now;
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -102,13 +104,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           appBar: AppBar(
             title: Text(_titleItem[_selectedItem],
                 textAlign: TextAlign.center,
-                style:const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
             elevation: 0,
             backgroundColor: transparent,
-            iconTheme:const IconThemeData(size: 30),
+            iconTheme: const IconThemeData(size: 30),
             actions: [
               IconButton(
-                icon:const Icon(Icons.notifications, size: 22),
+                icon: const Icon(Icons.notifications, size: 22),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -121,17 +124,17 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           ),
           drawer: Drawer(
             child: ListView(
-              padding:const EdgeInsets.all(0),
+              padding: const EdgeInsets.all(0),
               children: [
                 Container(
-                  padding:
-                  const EdgeInsets.only(left: 24, right: 24, top: 40, bottom: 24),
+                  padding: const EdgeInsets.only(
+                      left: 24, right: 24, top: 40, bottom: 24),
                   color: appData.isDark ? Colors.black : Colors.white,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding:const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: appData.isDark ? whiteColor : Colors.black,
@@ -154,7 +157,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             fontWeight: FontWeight.bold),
                       ),
                       const Space(4),
-                      Text(getEmail, style:const TextStyle(color: secondaryColor)),
+                      Text(
+                        getPhone,
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: appData.isDark ? whiteColor : Colors.black,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const Space(4),
+                      Text(getEmail,
+                          style: const TextStyle(color: secondaryColor)),
                     ],
                   ),
                 ),
@@ -197,7 +209,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>const FavouriteProvidersScreen()));
+                            builder: (context) =>
+                                const FavouriteProvidersScreen()));
                   },
                 ),
                 drawerWidget(
@@ -218,7 +231,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>const NotificationScreen()));
+                            builder: (context) => const NotificationScreen()));
                   },
                 ),
                 drawerWidget(
@@ -250,6 +263,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   drawerTitle: "Logout",
                   drawerIcon: Icons.logout,
                   drawerOnTap: () {
+                    SharedPref().setLogin(false);
                     Navigator.pop(context);
                     _showLogOutDialog();
                   },
@@ -260,10 +274,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           body: _pageItem[_selectedItem],
           bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
-            selectedIconTheme:const IconThemeData(size: 30, opacity: 1),
-            unselectedIconTheme:const IconThemeData(size: 28, opacity: 0.5),
-            selectedLabelStyle:const TextStyle(fontSize: 14),
-            unselectedLabelStyle:const TextStyle(fontSize: 14),
+            selectedIconTheme: const IconThemeData(size: 30, opacity: 1),
+            unselectedIconTheme: const IconThemeData(size: 28, opacity: 0.5),
+            selectedLabelStyle: const TextStyle(fontSize: 14),
+            unselectedLabelStyle: const TextStyle(fontSize: 14),
             showUnselectedLabels: true,
             elevation: 40,
             selectedFontSize: 16,
