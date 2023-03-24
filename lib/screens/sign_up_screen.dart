@@ -57,8 +57,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool? checkBoxValue = false;
   String? verificationIds;
 
-  // Country? _selectedCountry;
-
   String selectedValue = "IT";
 
   String countryCodeText = "+91";

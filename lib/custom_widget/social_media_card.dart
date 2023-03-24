@@ -4,16 +4,18 @@ import '../utils/images.dart';
 
 
 class SocialMediaCard extends StatelessWidget {
-  final String profileImageUrl;
-  final String name;
-  final String headline;
-  final String postTime;
-  final String postContent;
+  String profileImageUrl;
+  String name;
 
-  const SocialMediaCard({super.key,
+  // String headline;
+  String postTime;
+  String postContent;
+
+  SocialMediaCard({
+    super.key,
     required this.profileImageUrl,
     required this.name,
-    required this.headline,
+    // required this.headline,
     required this.postTime,
     required this.postContent,
     required this.postImages,
@@ -49,7 +51,7 @@ class SocialMediaCard extends StatelessWidget {
                         name,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(headline),
+                      // Text(headline),
                       const SizedBox(height: 4.0),
                       Text(
                         postTime,

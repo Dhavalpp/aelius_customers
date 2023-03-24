@@ -1,12 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 import '../main.dart';
+import 'drop_down_menu.dart';
 
 class ServicesRequestDialogWithCategory extends StatefulWidget {
   bool nearestser;
+
   ServicesRequestDialogWithCategory({
     required this.nearestser,
     super.key,
@@ -21,16 +22,6 @@ class _ServicesRequestDialogWithCategoryState
     extends State<ServicesRequestDialogWithCategory> {
   bool _isAccepted = false;
 
-  String _selectedcategoryItem = 'Plumber';
-  final List<String> _dropDowncategoryItems = [
-    'Electrician',
-    'Plumber',
-    'Carpenter',
-    'Painter',
-    'AC Repair',
-    'Cleaner'
-  ];
-
   late int _otp;
 
   // This method generates a random OTP.
@@ -39,7 +30,7 @@ class _ServicesRequestDialogWithCategoryState
   }
 
   DateTime _selectedDate = DateTime.now();
-  TimeOfDay selectedTime = const TimeOfDay(hour: 00, minute: 00);
+  TimeOfDay selectedTime = TimeOfDay.now();
 
   @override
   void initState() {
@@ -73,31 +64,33 @@ class _ServicesRequestDialogWithCategoryState
     }
   }
 
-  _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      backgroundColor: Colors.white,
-      context: context,
-      elevation: 3,
-      builder: (BuildContext context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Text(
-              "Best Services Provider Will Contact Soon....",
-              style: TextStyle(
-                  fontSize: 20,
-                  color: appData.isDark ? Colors.white : Colors.black,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.bold),
-            )
-          ],
-        ).paddingAll(10.0);
-      },
-    );
-  }
-
+  //
+  // _showBottomSheet(BuildContext context) {
+  //   showModalBottomSheet(
+  //     backgroundColor: Colors.white,
+  //     context: context,
+  //     elevation: 3,
+  //     builder: (BuildContext context) {
+  //       return Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         crossAxisAlignment: CrossAxisAlignment.stretch,
+  //         children: <Widget>[
+  //           Text(
+  //             "Best Services Provider Will Contact Soon....",
+  //             style: TextStyle(
+  //                 fontSize: 20,
+  //                 color: appData.isDark ? Colors.white : Colors.black,
+  //                 fontStyle: FontStyle.normal,
+  //                 fontWeight: FontWeight.bold),
+  //           )
+  //         ],
+  //       ).paddingAll(10.0);
+  //     },
+  //   );
+  // }
+  //
   // This method is called when the member clicks on the ACCEPT button.
+
   void _acceptRequest() {
     setState(() {
       _isAccepted = true;
@@ -111,8 +104,8 @@ class _ServicesRequestDialogWithCategoryState
       child: AlertDialog(
         icon: const Icon(Icons.timer),
         title: _isAccepted == true
-            ?const Text('SERVICE REQUESTED')
-            :const Text('SERVICE REQUEST'),
+            ? const Text('SERVICE REQUESTED')
+            : const Text('SERVICE REQUEST'),
         actions: [
           Center(
             child:
@@ -127,21 +120,9 @@ class _ServicesRequestDialogWithCategoryState
                           fontWeight: FontWeight.bold,
                         )),
                     Container(
-                        decoration:const BoxDecoration(),
-                        child: DropdownButton(
-                          value: _selectedcategoryItem,
-                          items: _dropDowncategoryItems
-                              .map((item) => DropdownMenuItem(
-                                    value: item,
-                                    child: Text(item),
-                                  ))
-                              .toList(),
-                          elevation: 3,
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedcategoryItem = value.toString();
-                            });
-                          },
+                        decoration: const BoxDecoration(),
+                        child: const DropDownMenu(
+                          gender: false,
                         )),
                     const SizedBox(height: 10),
                     Row(
@@ -175,7 +156,6 @@ class _ServicesRequestDialogWithCategoryState
                             children: [
                               Text("Select Time :-  ",
                                   style: TextStyle(
-
                                     color: appData.isDark
                                         ? Colors.white
                                         : Colors.black,
@@ -211,7 +191,7 @@ class _ServicesRequestDialogWithCategoryState
                       children: [
                         ElevatedButton(
                           onPressed: _acceptRequest,
-                          child:const Text('ACCEPT'),
+                          child: const Text('ACCEPT'),
                         ),
                         const SizedBox(width: 16),
                         ElevatedButton(
@@ -242,17 +222,17 @@ class _ServicesRequestDialogWithCategoryState
                     const SizedBox(height: 32),
                     Text(
                       'OTP: $_otp',
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                     ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child:const Text('Close'),
-                        ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Close'),
+                    ),
                   ],
                 ),
             ]),

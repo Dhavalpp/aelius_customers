@@ -18,12 +18,13 @@ class MediaPostList {
 
   int status;
   String message;
-  List<Datum> data;
+  List<ListPosts> data;
 
   factory MediaPostList.fromJson(Map<String, dynamic> json) => MediaPostList(
         status: json["status"],
         message: json["message"],
-        data: List<Datum>.from(json["Data"].map((x) => Datum.fromJson(x))),
+        data: List<ListPosts>.from(
+            json["Data"].map((x) => ListPosts.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -33,8 +34,8 @@ class MediaPostList {
       };
 }
 
-class Datum {
-  Datum({
+class ListPosts {
+  ListPosts({
     required this.id,
     required this.memberId,
     required this.desription,
@@ -46,24 +47,25 @@ class Datum {
   int id;
   int memberId;
   String desription;
-  String image;
+  List<String> image;
   String video;
   DateTime createdAt;
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory ListPosts.fromJson(Map<String, dynamic> json) => ListPosts(
         id: json["id"],
         memberId: json["member_id"],
         desription: json["desription"],
-        image: json["image"],
+        image: List<String>.from(json["image"].map((x) => x)),
         video: json["video"],
         createdAt: DateTime.parse(json["created_at"]),
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         "id": id,
         "member_id": memberId,
         "desription": desription,
-        "image": image,
+        "image": List<dynamic>.from(image.map((x) => x)),
         "video": video,
         "created_at": createdAt.toIso8601String(),
       };

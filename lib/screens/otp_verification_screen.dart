@@ -1,6 +1,10 @@
 import 'dart:async';
 
+import 'package:aelius_customer/screens/sign_in_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
 
 // import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
 
@@ -27,7 +31,7 @@ class OTPVerificationScreen extends StatefulWidget {
 
 class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   final _otpFormKey = GlobalKey<FormState>();
-  // final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   final int _otpCodeLength = 6;
   bool _isLoadingButton = false;
@@ -65,16 +69,16 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   //   print("signature $signature");
   // }
 
-  // // / listen sms
-  // _startListeningSms() {
-  //   SmsVerification.startListeningSms().then((message) {
-  //     setState(() {
-  //       _otpCode = SmsVerification.getCode(message, intRegex);
-  //       widget.smsController.text = _otpCode!;
-  //       _onOtpCallBack(_otpCode!, true);
-  //     });
-  //   });
-  // }
+  // / listen sms
+  _startListeningSms() {
+    SmsVerification.startListeningSms().then((message) {
+      setState(() {
+        _otpCode = SmsVerification.getCode(message, intRegex);
+        widget.smsController.text = _otpCode!;
+        _onOtpCallBack(_otpCode!, true);
+      });
+    });
+  }
 
   _onSubmitOtp() {
     setState(() {
@@ -83,9 +87,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     });
   }
 
-  // _onClickRetry() {
-  //   _startListeningSms();
-  // }
+  _onClickRetry() {
+    _startListeningSms();
+  }
 
   _onOtpCallBack(String otpCode, bool isAutofill) {
     setState(() {
@@ -114,33 +118,37 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     // _signInWithPhoneNumber();
   }
 
-  // Future<void> _signInWithPhoneNumber() async {
-  //   try {
-  //     final AuthCredential credential = PhoneAuthProvider.credential(
-  //       verificationId: widget.verificationIds!,
-  //       smsCode: widget.smsController.text,
-  //     );
-  //     final User? user = (await _auth.signInWithCredential(credential)).user;
-  //
-  //     if (user != null) {
-  //       if (widget.isLogin == true)
-  //         Navigator.pushReplacement(
-  //           context,
-  //           MaterialPageRoute(builder: (context) => DashBoardScreen()),
-  //         );
-  //       else {
-  //         Navigator.pushReplacement(
-  //           context,
-  //           MaterialPageRoute(builder: (context) => SignInScreen()),
-  //         );
-  //       }
-  //     } else {
-  //       print('Error: Could not sign in.');
-  //     }
-  //   } catch (e) {
-  //     print('Error: ${e.toString()}');
-  //   }
-  // }
+  Future<void> _signInWithPhoneNumber() async {
+    try {
+      final AuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: widget.verificationIds!,
+        smsCode: widget.smsController.text,
+      );
+      final User? user = (await _auth.signInWithCredential(credential)).user;
+
+      if (user != null) {
+        if (widget.isLogin == true) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => DashBoardScreen()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => SignInScreen()),
+          );
+        }
+      } else {
+        if (kDebugMode) {
+          print('Error: Could not sign in.');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: ${e.toString()}');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -183,24 +191,24 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // TextFieldPin(
-                  //     textController: widget.smsController,
-                  //     autoFocus: true,
-                  //     codeLength: _otpCodeLength,
-                  //     alignment: MainAxisAlignment.center,
-                  //     defaultBoxSize: 46.0,
-                  //     margin: 3,
-                  //     selectedBoxSize: 46.0,
-                  //     textStyle: const TextStyle(fontSize: 16),
-                  //     defaultDecoration: _pinPutDecoration.copyWith(
-                  //         border: Border.all(
-                  //             color: Theme.of(context)
-                  //                 .primaryColor
-                  //                 .withOpacity(0.8))),
-                  //     selectedDecoration: _pinPutDecoration,
-                  //     onChange: (code) {
-                  //       _onOtpCallBack(code, false);
-                  //     }),
+                  TextFieldPin(
+                      textController: widget.smsController,
+                      autoFocus: true,
+                      codeLength: _otpCodeLength,
+                      alignment: MainAxisAlignment.center,
+                      defaultBoxSize: 46.0,
+                      margin: 3,
+                      selectedBoxSize: 46.0,
+                      textStyle: const TextStyle(fontSize: 16),
+                      defaultDecoration: _pinPutDecoration.copyWith(
+                          border: Border.all(
+                              color: Theme.of(context)
+                                  .primaryColor
+                                  .withOpacity(0.8))),
+                      selectedDecoration: _pinPutDecoration,
+                      onChange: (code) {
+                        _onOtpCallBack(code, false);
+                      }),
                   const Space(40),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -232,14 +240,15 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         shape: const StadiumBorder(),
                       ),
                       onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const DashBoardScreen()),
-                        );
+                        //   Navigator.pushReplacement(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => const DashBoardScreen()),
+                        //   );
+                        // },
+                        // _onSubmitOtp,
+                        _signInWithPhoneNumber();
                       },
-                      // _onSubmitOtp,
-
                       child: const Text(
                         "Submit",
                         style: TextStyle(

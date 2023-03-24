@@ -1,9 +1,12 @@
+import 'package:aelius_customer/models/category.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import '../custom_widget/space.dart';
 import '../main.dart';
 import '../models/electrican_services_model.dart';
 import '../models/services_model.dart';
+import '../utils/api_list.dart';
 import '../utils/colors.dart';
 import '../utils/images.dart';
 
@@ -11,8 +14,7 @@ class ServiceProvidersScreen extends StatefulWidget {
   final int index;
   final bool servicesss;
 
-  const ServiceProvidersScreen(
-      {Key? key, required this.index, required this.servicesss})
+  const ServiceProvidersScreen({Key? key, required this.index, required this.servicesss})
       : super(key: key);
 
   @override
@@ -20,18 +22,22 @@ class ServiceProvidersScreen extends StatefulWidget {
 }
 
 class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
-  // Future<void> _navigateToProviderDetailScreen(int index) async {
-  //   final result = await Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) =>
-  //           ProviderDetailScreen(serviceIndex: widget.index, index: index),
-  //     ),
-  //   );
-  //   if (result) {
-  //     setState(() {});
-  //   }
-  // }
+  List<Datum> category_list = [];
+
+  Future<void> _fetchCategorie() async {
+    final response = await http.get(Uri.parse(categoryUrl));
+    final data = categoryFromJson(response.body);
+    setState(() {
+      category_list = data.data;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchCategorie();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,19 +93,15 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(16),
               shrinkWrap: true,
-              itemCount: widget.servicesss == false
-                  ? serviceProviders[widget.index].serviceProviders.length
-                  : electricainserviceProviders[widget.index]
-                      .electricainserviceProviders
-                      .length,
+              itemCount: category_list.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
                     // _navigateToProviderDetailScreen(index);
                   },
                   child: Container(
-                    padding:const  EdgeInsets.all(16),
-                    margin:const  EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(16),
+                    margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       color: appData.isDark
@@ -114,24 +116,18 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
-                              child: Image.asset(
-                                widget.servicesss == false
-                                    ? serviceProviders[widget.index]
-                                        .serviceProviders[index]
-                                        .providerImage
-                                    : electricainserviceProviders[widget.index]
-                                        .electricainserviceProviders[index]
-                                        .providerImage,
-                                width: 100,
-                                height: 150,
-                                fit: BoxFit.cover,
+                              child: FadeInImage(
+                                image: NetworkImage(
+                                    category_list[widget.index].file),
+                                fit: BoxFit.contain,
+                                placeholder: const AssetImage(banner),
                               ),
                             ),
                             Positioned(
                               bottom: 0,
                               left: 0,
                               child: Padding(
-                                padding:const  EdgeInsets.all(6.0),
+                                padding: const EdgeInsets.all(6.0),
                                 child: GestureDetector(
                                   onTap: () {
                                     widget.servicesss == false
@@ -146,25 +142,25 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                                       height: 16,
                                       width: 16,
                                       child: electricainserviceProviders[
-                                                  widget.index]
-                                              .electricainserviceProviders[
-                                                  index]
-                                              .isLiked
+                                      widget.index]
+                                          .electricainserviceProviders[
+                                      index]
+                                          .isLiked
                                           ? serviceProviders[widget.index]
-                                                  .serviceProviders[index]
-                                                  .isLiked
-                                              ? const Icon(
-                                                  Icons.favorite,
-                                                  size: 18,
-                                                  color: Colors.red,
-                                                )
-                                              : Image.asset(icHeart,
-                                                  color: Colors.black)
+                                          .serviceProviders[index]
+                                          .isLiked
+                                          ? const Icon(
+                                        Icons.favorite,
+                                        size: 18,
+                                        color: Colors.red,
+                                      )
+                                          : Image.asset(icHeart,
+                                          color: Colors.black)
                                           : const Icon(
-                                              Icons.favorite,
-                                              size: 18,
-                                              color: Colors.red,
-                                            ),
+                                        Icons.favorite,
+                                        size: 18,
+                                        color: Colors.red,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -182,14 +178,7 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    widget.servicesss == false
-                                        ? serviceProviders[widget.index]
-                                            .serviceProviders[index]
-                                            .name
-                                        : electricainserviceProviders[
-                                                widget.index]
-                                            .electricainserviceProviders[index]
-                                            .name,
+                                    category_list[widget.index].name,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     textAlign: TextAlign.start,
@@ -201,12 +190,12 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                                   Text(
                                     widget.servicesss == false
                                         ? serviceProviders[widget.index]
-                                            .serviceProviders[index]
-                                            .occupation
+                                        .serviceProviders[index]
+                                        .occupation
                                         : electricainserviceProviders[
-                                                widget.index]
-                                            .electricainserviceProviders[index]
-                                            .occupation,
+                                    widget.index]
+                                        .electricainserviceProviders[index]
+                                        .occupation,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     textAlign: TextAlign.start,
@@ -221,13 +210,13 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                                       Text(
                                         widget.servicesss == false
                                             ? serviceProviders[widget.index]
-                                                .serviceProviders[index]
-                                                .star
+                                            .serviceProviders[index]
+                                            .star
                                             : electricainserviceProviders[
-                                                    widget.index]
-                                                .electricainserviceProviders[
-                                                    index]
-                                                .star,
+                                        widget.index]
+                                            .electricainserviceProviders[
+                                        index]
+                                            .star,
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),

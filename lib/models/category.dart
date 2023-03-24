@@ -10,6 +10,30 @@ String categoryToJson(Category data) => json.encode(data.toJson());
 
 class Category {
   Category({
+    required this.status,
+    required this.message,
+    required this.data,
+  });
+
+  int status;
+  String message;
+  List<Datum> data;
+
+  factory Category.fromJson(Map<String, dynamic> json) => Category(
+        status: json["status"],
+        message: json["message"],
+        data: List<Datum>.from(json["Data"].map((x) => Datum.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "status": status,
+        "message": message,
+        "Data": List<dynamic>.from(data.map((x) => x.toJson())),
+      };
+}
+
+class Datum {
+  Datum({
     required this.id,
     required this.name,
     required this.file,
@@ -29,7 +53,7 @@ class Category {
   int? createdBy;
   int? updatedBy;
 
-  factory Category.fromJson(Map<String, dynamic> json) => Category(
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
         id: json["id"],
         name: json["name"],
         file: json["file"],

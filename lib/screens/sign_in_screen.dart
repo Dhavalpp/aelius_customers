@@ -1,5 +1,7 @@
 import 'package:aelius_customer/screens/sign_up_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_country_code_picker/fl_country_code_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -19,7 +21,7 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final TextEditingController _smsController = TextEditingController();
   String? verificationIds;
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
@@ -66,37 +68,38 @@ class _SignInScreenState extends State<SignInScreen> {
     return false;
   }
 
-  //
-  // Future<void> _verifyPhoneNumber() async {
-  //   verificationCompleted(AuthCredential phoneAuthCredential) async {
-  //     await FirebaseAuth.instance.signInWithCredential(phoneAuthCredential);
-  //
-  //   }
-  //
-  //   verificationFailed(FirebaseAuthException authException) {
-  //     print(
-  //         'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
-  //   }
-  //
-  //   codeSent(String verificationId, [int? forceResendingToken]) {
-  //     print('Please check your phone for the verification code.');
-  //     this.verificationIds = verificationId;
-  //   }
-  //
-  //   codeAutoRetrievalTimeout(String verificationId) {
-  //     this.verificationIds = verificationId;
-  //   }
-  //
-  //   await _firebaseAuth.verifyPhoneNumber(
-  //     phoneNumber: "+91" + mobileNumber.text,
-  //     timeout: const Duration(seconds: 60),
-  //     verificationCompleted: verificationCompleted,
-  //     verificationFailed: verificationFailed,
-  //     codeSent: codeSent,
-  //     codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
-  //   );
-  // }
-  //
+  Future<void> _verifyPhoneNumber() async {
+    verificationCompleted(AuthCredential phoneAuthCredential) async {
+      await FirebaseAuth.instance.signInWithCredential(phoneAuthCredential);
+    }
+
+    verificationFailed(FirebaseAuthException authException) {
+      if (kDebugMode) {
+        print(
+            'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
+      }
+    }
+
+    codeSent(String verificationId, [int? forceResendingToken]) {
+      if (kDebugMode) {
+        print('Please check your phone for the verification code.');
+      }
+      verificationIds = verificationId;
+    }
+
+    codeAutoRetrievalTimeout(String verificationId) {
+      verificationIds = verificationId;
+    }
+
+    await _firebaseAuth.verifyPhoneNumber(
+      phoneNumber: "+91${mobileNumber.text}",
+      timeout: const Duration(seconds: 60),
+      verificationCompleted: verificationCompleted,
+      verificationFailed: verificationFailed,
+      codeSent: codeSent,
+      codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +203,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         : Colors.black,
                   ),
                   onPressed: () async {
-                    // _verifyPhoneNumber();
+                    _verifyPhoneNumber();
                     if (_loginFormKey.currentState!.validate()) {
                       Navigator.push(
                         context,

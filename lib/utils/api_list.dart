@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:aelius_customer/models/media_post_list.dart';
 import 'package:http/http.dart' as http;
+
 import '../models/banner_list_model.dart';
 import '../models/banner_model.dart';
 import '../models/category.dart';
@@ -25,18 +27,18 @@ Future<Category> fetchCategories() async {
   var data = jsonDecode(response.body);
   if (response.statusCode == 200) {
     var json = Category.fromJson(data);
-    print(json.name);
-    return Category(
-        id: json.id,
-        name: json.name,
-        file: json.file,
-        status: json.status,
-        createdAt: json.createdAt,
-        updatedAt: json.createdAt);
+    return Category.fromJson(jsonDecode(response.body));
     // return Category(status: json.status, message:json.message, data:json.data);
   } else {
     throw Exception('Failed to load categories');
   }
+}
+
+Future<void> fetchCategory(List category_list) async {
+  final response = await http.get(Uri.parse(categoryUrl));
+  final data = categoryFromJson(response.body);
+
+  category_list = data.data;
 }
 
 Future<BannerModel> forntPageBanner() async {
@@ -169,9 +171,19 @@ Future immdiateBooking(
   }
 }
 
+Future<MediaPostList> fetchPosts() async {
+  final response = await http.get(Uri.parse(mediaListUrl));
+  if (response.statusCode == 200) {
+    print(response.body);
+    return mediaPostListFromJson(response.body);
+  } else {
+    throw Exception('Failed to fetch posts');
+  }
+}
+
 Future<MediaPostList> h2hMediaPostList() async {
   final responses = await http.post(
-    Uri.parse(postUrl),
+    Uri.parse(mediaListUrl),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8'
     },
@@ -180,7 +192,7 @@ Future<MediaPostList> h2hMediaPostList() async {
   if (responses.statusCode == 200) {
     var mediapoStlist = MediaPostList.fromJson(data);
     print(mediapoStlist.data[0].image);
-    return MediaPostList.fromJson(jsonDecode(responses.body));
+    return mediaPostListFromJson(jsonDecode(responses.body));
   } else {
     throw Exception('Failed to load Banner');
   }

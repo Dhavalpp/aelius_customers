@@ -26,7 +26,6 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
   @override
   void initState() {
     super.initState();
-
     controller = TextEditingController(text: widget.text);
   }
 
@@ -41,8 +40,9 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(widget.label,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          const Space(4),
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const Space(2),
           TextField(
             controller: controller,
             decoration: InputDecoration(

@@ -27,9 +27,9 @@ class _HomeState extends State<Home> {
   List<String> bannerList = [banner1, banner2, banner];
 
   final offerPagesController =
-  PageController(viewportFraction: 0.93, keepPage: true, initialPage: 1);
+      PageController(viewportFraction: 0.93, keepPage: true, initialPage: 1);
   final reviewPagesController =
-  PageController(viewportFraction: 0.93, keepPage: true, initialPage: 1);
+      PageController(viewportFraction: 0.93, keepPage: true, initialPage: 1);
 
   @override
   void dispose() {
@@ -60,15 +60,23 @@ class _HomeState extends State<Home> {
                       itemBuilder: (context, index) {
                         final banner = banners[index];
                         return Center(
-                          child: CachedNetworkImage(
+                          child:
+                              //   FadeInImage(
+                              // image: NetworkImage(banner.image),
+                              // fit: BoxFit.cover,
+                              // placeholder: const AssetImage(banner1),
+                              // ),
+                              //
+                              CachedNetworkImage(
                             imageUrl: banner.image,
                             fit: BoxFit.cover,
                             height: double.infinity,
                             width: double.infinity,
                             placeholder: (context, url) =>
-                                CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
+                                const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => Center(
+                              child: Image.asset(banner1),
+                            ),
                           ),
                         );
                       },
@@ -78,7 +86,7 @@ class _HomeState extends State<Home> {
                       child: Text('${snapshot.error}'),
                     );
                   } else {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
                 },
               ),
@@ -172,21 +180,21 @@ class _HomeState extends State<Home> {
           onTap: () {
             sizeid == 0
                 ? showDialog(
-              context: context,
-              builder: (context) => const NewServicesRequestDialog(),
-            )
+                    context: context,
+                    builder: (context) => const NewServicesRequestDialog(),
+                  )
                 : sizeid == 1
-                ? showDialog(
-              context: context,
-              builder: (context) => ServicesRequestDialogWithCategory(
-                nearestser: false,
-              ),
-            )
-                : Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const RewardPointScreen()),
-            );
+                    ? showDialog(
+                        context: context,
+                        builder: (context) => ServicesRequestDialogWithCategory(
+                          nearestser: false,
+                        ),
+                      )
+                    : Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RewardPointScreen()),
+                      );
           }),
     );
   }

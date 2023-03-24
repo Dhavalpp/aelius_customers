@@ -2,6 +2,7 @@ import 'package:aelius_customer/utils/api_list.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
+import 'drop_down_menu.dart';
 
 class NewServicesRequestDialog extends StatefulWidget {
   const NewServicesRequestDialog({super.key});
@@ -14,22 +15,11 @@ class NewServicesRequestDialog extends StatefulWidget {
 class _NewServicesRequestDialogState extends State<NewServicesRequestDialog> {
   bool _isAccepted = false;
 
-  String _selectedcategoryItem = "Painter";
-  final List<String> _dropDowncategoryItems = [
-    'Electrician',
-    'Plumber',
-    'Carpenter',
-    'Painter',
-    'AC Repair',
-    'Cleaner'
-  ];
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _isAccepted;
-    _selectedcategoryItem;
   }
 
   @override
@@ -53,20 +43,8 @@ class _NewServicesRequestDialogState extends State<NewServicesRequestDialog> {
                         )),
                     Container(
                         decoration: const BoxDecoration(),
-                        child: DropdownButton(
-                          value: _selectedcategoryItem,
-                          items: _dropDowncategoryItems
-                              .map((item) => DropdownMenuItem(
-                                    value: item,
-                                    child: Text(item),
-                                  ))
-                              .toList(),
-                          elevation: 3,
-                          onChanged: (values) {
-                            setState(() {
-                              _selectedcategoryItem = values.toString();
-                            });
-                          },
+                        child: const DropDownMenu(
+                          gender: false,
                         )),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
