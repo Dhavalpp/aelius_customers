@@ -17,11 +17,11 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   NotificationServices notificationServices = NotificationServices();
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    SharedPref().getLogin();
     notificationServices.requestNotificationPermission();
     notificationServices.firebaseInit(context);
     notificationServices.setupInteractMessage(context);

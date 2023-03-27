@@ -1,4 +1,5 @@
 import 'package:aelius_customer/models/category.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,7 +15,8 @@ class ServiceProvidersScreen extends StatefulWidget {
   final int index;
   final bool servicesss;
 
-  const ServiceProvidersScreen({Key? key, required this.index, required this.servicesss})
+  const ServiceProvidersScreen(
+      {Key? key, required this.index, required this.servicesss})
       : super(key: key);
 
   @override
@@ -49,9 +51,7 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
         iconTheme:
             IconThemeData(color: appData.isDark ? whiteColor : blackColor),
         title: Text(
-          widget.servicesss == true
-              ? "Electrician Services Provider"
-              : "Service Providers",
+          "Service Providers",
           textAlign: TextAlign.center,
           style: TextStyle(
               fontWeight: FontWeight.w900,
@@ -62,35 +62,8 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Column(children: [
-            //   const Text(
-            //     "Don't Know about Any Service Men ?",
-            //     style: TextStyle(fontSize: 15),
-            //   ),
-            //   ElevatedButton(
-            //     onPressed: () {
-            //       showDialog(
-            //         context: context,
-            //         builder: (context) => ServicesRequestDialogWithCategory(nearestser: true,
-            //
-            //         ),
-            //       );
-            //     },
-            //     style: ElevatedButton.styleFrom(
-            //         shape:const StadiumBorder(),
-            //         backgroundColor: appData.isDark
-            //             ? Colors.grey.withOpacity(0.2)
-            //             : Colors.black,
-            //         padding: const EdgeInsets.only(
-            //             left: 20, right: 20, top: 8, bottom: 8)),
-            //     child:const Text("Find Nearest",
-            //         textAlign: TextAlign.center,
-            //         style: TextStyle(color: Colors.white)),
-            //   ),
-            // ]),
             ListView.builder(
               scrollDirection: Axis.vertical,
-              physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(16),
               shrinkWrap: true,
               itemCount: category_list.length,
@@ -116,11 +89,19 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
-                              child: FadeInImage(
-                                image: NetworkImage(
-                                    category_list[widget.index].file),
-                                fit: BoxFit.contain,
-                                placeholder: const AssetImage(banner),
+                              child: CachedNetworkImage(
+                                imageUrl: category_list[0].file,
+                                fit: BoxFit.cover,
+                                height: 150,
+                                width: 100,
+                                placeholder: (context, url) => const Center(
+                                    child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) => Center(
+                                  child: Image.asset(
+                                    userImage,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                               ),
                             ),
                             Positioned(
@@ -139,29 +120,18 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                                     maxRadius: 18,
                                     backgroundColor: likedIconBackColor,
                                     child: SizedBox(
-                                      height: 16,
-                                      width: 16,
-                                      child: electricainserviceProviders[
-                                      widget.index]
-                                          .electricainserviceProviders[
-                                      index]
-                                          .isLiked
-                                          ? serviceProviders[widget.index]
-                                          .serviceProviders[index]
-                                          .isLiked
-                                          ? const Icon(
-                                        Icons.favorite,
-                                        size: 18,
-                                        color: Colors.red,
-                                      )
-                                          : Image.asset(icHeart,
-                                          color: Colors.black)
-                                          : const Icon(
-                                        Icons.favorite,
-                                        size: 18,
-                                        color: Colors.red,
-                                      ),
-                                    ),
+                                        height: 16,
+                                        width: 16,
+                                        child: serviceProviders[widget.index]
+                                                .serviceProviders[index]
+                                                .isLiked
+                                            ? const Icon(
+                                                Icons.favorite,
+                                                size: 18,
+                                                color: Colors.red,
+                                              )
+                                            : Image.asset(icHeart,
+                                                color: Colors.black)),
                                   ),
                                 ),
                               ),
@@ -188,14 +158,7 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                                   ),
                                   const Space(4),
                                   Text(
-                                    widget.servicesss == false
-                                        ? serviceProviders[widget.index]
-                                        .serviceProviders[index]
-                                        .occupation
-                                        : electricainserviceProviders[
-                                    widget.index]
-                                        .electricainserviceProviders[index]
-                                        .occupation,
+                                    category_list[0].status.name,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     textAlign: TextAlign.start,
@@ -205,18 +168,15 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                                   const Space(4),
                                   Row(
                                     children: [
-                                      Icon(Icons.star,
-                                          color: starIconColor, size: 16),
+                                      const Text(
+                                        "Started :- ",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                      const Space(10),
                                       Text(
-                                        widget.servicesss == false
-                                            ? serviceProviders[widget.index]
-                                            .serviceProviders[index]
-                                            .star
-                                            : electricainserviceProviders[
-                                        widget.index]
-                                            .electricainserviceProviders[
-                                        index]
-                                            .star,
+                                        "${category_list[0].createdAt.day}-${category_list[0].createdAt.month}-${category_list[0].createdAt.year}",
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),

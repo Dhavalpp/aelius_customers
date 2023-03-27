@@ -5,6 +5,7 @@ import 'package:aelius_customer/screens/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
 
 import '../custom_widget/space.dart';
@@ -12,6 +13,7 @@ import '../main.dart';
 import '../utils/api_list.dart';
 import '../utils/colors.dart';
 import '../utils/constant.dart';
+import '../utils/shared_pref.dart';
 import 'dashboard_screen.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
@@ -70,11 +72,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     // _startListeningSms();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    // SmsVerification.stopListening();
-  }
 
   BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
@@ -130,15 +127,25 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
       if (user != null) {
         if (widget.isLogin == true) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => DashBoardScreen()),
-          );
+          if (widget.mobileController != null) {
+            login(widget.mobileController);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => DashBoardScreen()),
+            );
+            await SharedPref.setLoggedIn(true);
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) =>
+                  Dialog(child: Text(widget.mobileController.toString())),
+            );
+          }
         } else {
           registerUser(
             widget.imagess!,
             widget.nameController!,
-            widget.mobileController,
+            widget.mobileController.toString(),
             widget.emailController!,
             widget.date!,
             widget.gender!,
@@ -174,7 +181,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         elevation: 0,
         backgroundColor: transparent,
         iconTheme:
-            IconThemeData(color: appData.isDark ? whiteColor : blackColor),
+            IconThemeData(color: appData.isDark ? Colors.white : Colors.black),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),

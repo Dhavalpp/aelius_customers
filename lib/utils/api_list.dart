@@ -1,19 +1,22 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:aelius_customer/models/media_post_list.dart';
+import 'package:aelius_customer/utils/shared_pref.dart';
 import 'package:http/http.dart' as http;
-
 import '../models/banner_list_model.dart';
 import '../models/banner_model.dart';
 import '../models/category.dart';
+import '../models/user_model.dart';
+import '../screens/dashboard_screen.dart';
 
 String baseUrl = 'http://imusiccompany.com/api/';
 String categoryUrl = '${baseUrl}categories';
 String bannerUrl = '${baseUrl}banner';
 String registerUrl = '${baseUrl}member/insert';
-String loginUrl = '${baseUrl}memberlogin';
+String loginUrl = '${baseUrl}login';
+String updateProfilesUrl = '${baseUrl}customer/updateprofile';
+String updateProfilImage = '${baseUrl}customer/updateprofile';
 String bookingURL = '${baseUrl}booking';
 String postUrl = '${baseUrl}media/post';
 String likeUrl = '${baseUrl}media/like';
@@ -40,14 +43,36 @@ Future<BannerModel> forntPageBanner() async {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
-      body: jsonEncode(<String, String>{'banner_for': 'member'}));
+      body: jsonEncode(<String, String>{'banner_for': 'customer'}));
   var data = jsonDecode(responses.body);
   if (responses.statusCode == 200) {
     var bannerModels = BannerModel.fromJson(data);
     print(bannerModels.data[0].image);
+    print(responses.body);
     return BannerModel.fromJson(jsonDecode(responses.body));
   } else {
     throw Exception('Failed to load Banner');
+  }
+}
+
+Future login(String mobileno) async {
+  final responses = await http.post(Uri.parse(loginUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(<String, String>{'mobile_number': mobileno}));
+  var data = jsonDecode(responses.body);
+
+  if (responses.statusCode == 200) {
+    print(responses.body);
+    print(data);
+    String jsonString = jsonEncode(responses.body);
+
+    SharedPref().setSharedPreferences(UserModel.fromJson(data));
+    UserModel.fromJson(data);
+    // return "success";
+  } else {
+    throw Exception('Failed to login user');
   }
 }
 
@@ -102,27 +127,38 @@ Future registerUser(
   }
 }
 
-Future login(String mobileno) async {
-  final responses = await http.post(Uri.parse(loginUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8'
-      },
-      body: jsonEncode(<String, String>{'mobile_number': mobileno}));
-  var data = jsonDecode(responses.body);
-  if (responses.statusCode == 200) {
-    print(responses.body);
-    return "success";
+Future updateUser(
+  String id,
+  String username,
+  String phonenumber,
+  String email,
+  String dateofBirth,
+  String gender,
+  String address,
+  String region,
+) async {
+  final url = Uri.parse(updateProfilesUrl);
+  //
+  final request = http.MultipartRequest('POST', url);
+  request.fields['id'] = id;
+  request.fields['full_name'] = username;
+  request.fields['whatsapp_no'] = phonenumber;
+  request.fields['email_id'] = email;
+  request.fields['date_of_birth'] = dateofBirth;
+  request.fields['gender'] = gender;
+  request.fields['regionresidence_adress'] = address;
+  request.fields['region'] = region;
+  var response = await request.send();
+  if (response.statusCode == 200) {
+    print(response);
   } else {
-    throw Exception('Failed to load Banner');
+    throw Exception('Failed to register user.');
   }
 }
 
 Future scheduleBooking(String id, String categoryname, String startDate,
     String starttime, String description) async {
   final responses = await http.post(Uri.parse(bookingURL),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8'
-      },
       body: jsonEncode(<String, String>{
         'customer_id': id,
         'category_name': categoryname,
@@ -168,15 +204,14 @@ Future immdiateBooking(
 
 Future<MediaPostList> h2hMediaPostList() async {
   final responses = await http.post(
-    Uri.parse(postUrl),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8'
-    },
+    Uri.parse(mediaListUrl),
   );
   var data = jsonDecode(responses.body);
   if (responses.statusCode == 200) {
+    print(data);
     var mediapoStlist = MediaPostList.fromJson(data);
     print(mediapoStlist.data[0].image);
+
     return MediaPostList.fromJson(jsonDecode(responses.body));
   } else {
     throw Exception('Failed to load Banner');

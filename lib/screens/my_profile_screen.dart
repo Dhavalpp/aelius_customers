@@ -1,13 +1,18 @@
 import 'dart:io';
 
+import 'package:aelius_customer/utils/api_list.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../components/text_field_widget.dart';
+import '../custom_widget/drop_down_menu.dart';
+import '../custom_widget/space.dart';
 import '../models/customer_details_model.dart';
+import '../models/user_model.dart';
 import '../utils/colors.dart';
 import '../utils/images.dart';
+import '../utils/shared_pref.dart';
 import 'dashboard_screen.dart';
 
 class MyProfileScreen extends StatefulWidget {
@@ -33,6 +38,26 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   File? imageFile;
   XFile? pickedFile;
+  UserModel? userModels;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    sharePreferenceData();
+  }
+
+  Future<dynamic> sharePreferenceData() async {
+    UserModel? userData = await SharedPref().getSharedPreferences();
+    setState(() {
+      userModels = userData;
+      print(userModels!.detail[0].fullName);
+    });
+  }
+
+  updateData(UserModel? userData) async {
+    await SharedPref().setSharedPreferences(userData!);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,14 +86,24 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               child: const Text("Save", style: TextStyle(fontSize: 16)),
               onPressed: () {
                 if (customerName != "") {
-                  setName(customerName);
+                  updateData(userModels);
                 }
                 if (customerEmail != "") {
-                  setEmail(customerEmail);
+                  updateData(userModels);
                 }
                 if (customerAbout != "") {
-                  setAbout(customerAbout);
+                  updateData(userModels);
                 }
+                updateUser(
+                  userModels!.detail[0].id.toString(),
+                  customerName,
+                  customerMobile,
+                  customerEmail,
+                  dateofBirth,
+                  customerGender,
+                  customerAddress,
+                  customerResidancialArea,
+                );
                 setState(() {
                   Navigator.pushAndRemoveUntil(
                     context,
@@ -113,7 +148,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   ),
                 ),
                 Positioned(
-                  bottom: 4,
+                  bottom: 3,
                   right: 0,
                   child: Container(
                     padding: const EdgeInsets.all(6),
@@ -134,7 +169,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           const SizedBox(height: 20),
           TextFieldWidget(
             label: "Full Name",
-            text: getName,
+            text: userModels!.detail[0].fullName,
             onChanged: (name) {
               customerName = name;
             },
@@ -142,7 +177,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           const SizedBox(height: 15),
           TextFieldWidget(
             label: "Email",
-            text: getEmail,
+            text: userModels!.detail[0].emailId,
             onChanged: (email) {
               customerEmail = email;
             },
@@ -150,9 +185,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           const SizedBox(height: 15),
           TextFieldWidget(
             label: "Phone No.",
-            text: getPhone,
+            text: userModels!.detail[0].whatsappNumber.toString(),
             onChanged: (phone) {
-              customerEmail = phone;
+              customerMobile = phone;
             },
           ),
           const SizedBox(height: 15),
@@ -171,25 +206,61 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 TextButton(
                   onPressed: _selectDate,
                   child: Container(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
                           color: Colors.grey.shade400,
                           borderRadius: BorderRadius.circular(5.0)),
-                      child: Text(getPhone)),
-                )
+                      child: Text(_selectedDate == DateTime.now()
+                          ? "${userModels!.detail[0].dateOfBirth.day}-${userModels!.detail[0].dateOfBirth.month}-${userModels!.detail[0].dateOfBirth.year}"
+                          : "${_selectedDate.day}-${_selectedDate.month}-${_selectedDate.year}")),
+                ),
                 //     ElevatedButton(
                 //
               ],
             ),
           ),
+          const Space(15),
+          backContainer(
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Area of Residence",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                DropDownMenu(gender: true, isregion: false),
+              ],
+            ),
+          ),
           const SizedBox(height: 15),
           TextFieldWidget(
-            label: "About",
-            text: getAbout,
+            label: "Address",
+            text: userModels!.detail[0].areaOfResidenceAdress,
             maxLines: 5,
             onChanged: (about) {
-              customerAbout = about;
+              customerAddress = about;
             },
+          ),
+          const Space(15),
+          backContainer(
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Area of Residence",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                DropDownMenu(gender: false, isregion: true),
+              ],
+            ),
           ),
         ],
       ),

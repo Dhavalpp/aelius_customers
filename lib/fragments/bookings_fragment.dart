@@ -69,15 +69,16 @@ class _BookingsFragmentState extends State<BookingsFragment>
             return ListView.builder(
               itemCount: posts.length,
               itemBuilder: (context, index) {
-                final post = posts[index];
                 if (posts.isNotEmpty) {
+                  print(posts[0].id);
                   return SocialMediaCard(
-                    postImages: post.image,
+                    postImages: posts[1].image,
                     profileImageUrl: userImage,
-                    name: post.memberId.toString(),
-                    postTime: post.createdAt.toString(),
-                    postContent: post.desription,
+                    name: posts[1].memberId.toString(),
+                    postTime: posts[1].createdAt.toString(),
+                    postContent: posts[1].desription,
                   );
+                  // return Text(posts[index].desription);
                 } else {
                   return Container();
                 }

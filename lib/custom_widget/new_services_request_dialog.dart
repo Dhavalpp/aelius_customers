@@ -52,11 +52,9 @@ class _NewServicesRequestDialogState extends State<NewServicesRequestDialog> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            setState(() {
-                              immdiateBooking(
-                                  "2", "doctor", "Rajkot", "360003");
-                              _isAccepted = true;
-                            });
+                            scheduleBooking("2", "doctor", "2023-08-22",
+                                "11:00", "booking service");
+                            _isAccepted = true;
                           },
                           child: const Text('ACCEPT'),
                         ),

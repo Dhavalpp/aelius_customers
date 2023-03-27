@@ -1,22 +1,30 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/user_model.dart';
+
+const String USERDATA = "UserData";
 
 class SharedPref {
   final String isDark = "isDark";
   late SharedPreferences prefs;
 
-  getSharedPreferences() async {
+  Future<void> setSharedPreferences(UserModel usermodel) async {
     prefs = await SharedPreferences.getInstance();
-    prefs.setString("username", "naresh");
-    prefs.setString("mobile", "phone no");
-    prefs.setString("username", "phone no");
-    prefs.setString("imgURL", "url");
-    prefs.setString("Category", "categories");
-    prefs.setString("pincode", "zipcode");
-    prefs.setString("region", "region");
-    prefs.setString("username", "");
+    String jsonString = jsonEncode(usermodel);
+    prefs.setString(USERDATA, jsonString);
+  }
 
-    prefs.setInt("customer_id", 0);
-    prefs.setInt("member_id", 0);
+  Future<UserModel?> getSharedPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+    String? jsonString = prefs.getString(USERDATA);
+    UserModel userModel = UserModel.fromJson(jsonDecode(jsonString!));
+    if (jsonString == null) {
+      return null;
+    }
+    return userModel;
+    prefs.setString(USERDATA, jsonString);
   }
 
   retrieveStringValue() async {
@@ -37,17 +45,28 @@ class SharedPref {
     return isDark;
   }
 
-  final String login = "islogin";
+  static const String _loggedInKey = 'loggedIn';
 
-  Future<void> setLogin(bool isLogin) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool(this.login, isLogin);
+  static Future<bool> isLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_loggedInKey) ?? false;
   }
 
-  Future<bool> getLogin() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    bool isLogin;
-    isLogin = pref.getBool(this.login) ?? false;
-    return isLogin;
+  static Future<void> setLoggedIn(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_loggedInKey, value);
   }
+
+//
+// Future<void> setLogin(bool isLogin) async {
+//   final SharedPreferences prefs = await SharedPreferences.getInstance();
+//   prefs.setBool(this.login, isLogin);
+// }
+//
+// Future<bool> getLogin() async {
+//   final SharedPreferences pref = await SharedPreferences.getInstance();
+//   bool isLogin;
+//   isLogin = pref.getBool(this.login) ?? false;
+//   return isLogin;
+// }
 }

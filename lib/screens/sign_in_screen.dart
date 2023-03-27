@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import '../custom_widget/space.dart';
 import '../main.dart';
+import '../utils/api_list.dart';
 import '../utils/colors.dart';
 import '../utils/constant.dart';
 import '../utils/images.dart';
@@ -89,12 +90,13 @@ class _SignInScreenState extends State<SignInScreen> {
         context,
         MaterialPageRoute(
             builder: (context) => OTPVerificationScreen(
-                  mobileController: mobileNumber.text,
+                  mobileController: (mobileNumber.text),
                   verificationIds: verificationIds,
                   isLogin: true,
                   smsController: _smsController,
                 )),
       );
+      print(mobileNumber.text);
     }
 
     codeAutoRetrievalTimeout(String verificationId) {
@@ -216,6 +218,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   onPressed: () async {
                     if (_loginFormKey.currentState!.validate()) {
                       _verifyPhoneNumber();
+                      print(mobileNumber.text);
                     }
                   },
                   child: const Text("Log In",

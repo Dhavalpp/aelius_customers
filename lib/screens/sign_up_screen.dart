@@ -171,7 +171,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   verificationIds: verificationIds,
                   isLogin: false,
                   smsController: _smsController,
-                  mobileController: _phoneController.text,
+                  mobileController: (_phoneController.text),
                   imagess: _image,
                   nameController: _nameController.text,
                   refrealController: _refralCode.text,
@@ -186,7 +186,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     await _firebaseAuth.verifyPhoneNumber(
-      phoneNumber: "+91" + _phoneController.text,
+      phoneNumber: countryCodeText + _phoneController.text,
       timeout: const Duration(seconds: 60),
       verificationCompleted: verificationCompleted,
       verificationFailed: verificationFailed,

@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:aelius_customer/screens/dashboard_screen.dart';
 import 'package:aelius_customer/screens/sign_in_screen.dart';
+import 'package:aelius_customer/utils/shared_pref.dart';
 import 'package:flutter/material.dart';
 
 import '../models/banner_model.dart';
@@ -23,7 +25,14 @@ class _BannerScreenState extends State<BannerScreen> {
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 3), () {
-      setState(() {
+      setState(() async {
+        bool isLoggedIn = await SharedPref.isLoggedIn();
+        if (isLoggedIn == true) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const DashBoardScreen()),
+          );
+        }
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SignInScreen()),

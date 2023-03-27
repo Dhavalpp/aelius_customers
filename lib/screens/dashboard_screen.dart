@@ -1,5 +1,8 @@
+import 'package:aelius_customer/models/user_model.dart';
 import 'package:aelius_customer/screens/reward_point_screen.dart';
 import 'package:aelius_customer/screens/sign_in_screen.dart';
+import 'package:aelius_customer/utils/images.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../custom_widget/space.dart';
@@ -25,11 +28,14 @@ class DashBoardScreen extends StatefulWidget {
 class _DashBoardScreenState extends State<DashBoardScreen> {
   DateTime? _currentBackPressTime;
 
+  late UserModel? userModels;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _selectedItem;
+    sharePreferenceData();
   }
 
   final _pageItem = [
@@ -80,6 +86,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     );
   }
 
+  Future<dynamic> sharePreferenceData() async {
+    UserModel? userData = await SharedPref().getSharedPreferences();
+    setState(() {
+      userModels = userData;
+      print(userModels!.detail[0].fullName);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -105,7 +119,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             title: Text(_titleItem[_selectedItem],
                 textAlign: TextAlign.center,
                 style:
-                    const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
+                const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
             elevation: 0,
             backgroundColor: transparent,
             iconTheme: const IconThemeData(size: 30),
@@ -133,24 +147,26 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: appData.isDark ? whiteColor : Colors.black,
-                        ),
-                        child: Text(
-                          "J",
-                          style: TextStyle(
-                              fontSize: 24.0,
-                              color:
-                                  appData.isDark ? Colors.black : whiteColor),
-                          textAlign: TextAlign.center,
+                      CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        child: CachedNetworkImage(
+                          imageUrl: userModels!.detail[0].image,
+                          fit: BoxFit.cover,
+                          height: 70,
+                          width: 70,
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => Center(
+                            child: Image.asset(
+                              userImage,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                       ),
                       const Space(4),
                       Text(
-                        getName,
+                        userModels!.detail[0].fullName,
                         style: TextStyle(
                             fontSize: 18,
                             color: appData.isDark ? whiteColor : Colors.black,
@@ -158,14 +174,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                       ),
                       const Space(4),
                       Text(
-                        getPhone,
+                        userModels!.detail[0].whatsappNumber.toString(),
                         style: TextStyle(
                             fontSize: 18,
                             color: appData.isDark ? whiteColor : Colors.black,
                             fontWeight: FontWeight.bold),
                       ),
                       const Space(4),
-                      Text(getEmail,
+                      Text(userModels!.detail[0].emailId,
                           style: const TextStyle(color: secondaryColor)),
                     ],
                   ),
@@ -210,7 +226,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                const FavouriteProvidersScreen()));
+                            const FavouriteProvidersScreen()));
                   },
                 ),
                 drawerWidget(
@@ -263,7 +279,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   drawerTitle: "Logout",
                   drawerIcon: Icons.logout,
                   drawerOnTap: () {
-                    SharedPref().setLogin(false);
+                    SharedPref.setLoggedIn(false);
                     Navigator.pop(context);
                     _showLogOutDialog();
                   },
