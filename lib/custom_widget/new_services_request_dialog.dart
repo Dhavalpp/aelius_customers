@@ -43,7 +43,8 @@ class _NewServicesRequestDialogState extends State<NewServicesRequestDialog> {
                         )),
                     Container(
                         decoration: const BoxDecoration(),
-                        child: const DropDownMenu(
+                        child: DropDownMenu(
+                          isregion: false,
                           gender: false,
                         )),
                     Row(

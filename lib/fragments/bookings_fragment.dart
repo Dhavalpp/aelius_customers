@@ -62,7 +62,7 @@ class _BookingsFragmentState extends State<BookingsFragment>
       // },
       // child: Center(child: Icon(Icons.add,color: Colors.white),)),
       body: FutureBuilder<MediaPostList>(
-        future: fetchPosts(),
+        future: h2hMediaPostList(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final posts = snapshot.data!.data;

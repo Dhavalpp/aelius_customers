@@ -85,6 +85,16 @@ class _SignInScreenState extends State<SignInScreen> {
         print('Please check your phone for the verification code.');
       }
       verificationIds = verificationId;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => OTPVerificationScreen(
+                  mobileController: mobileNumber.text,
+                  verificationIds: verificationIds,
+                  isLogin: true,
+                  smsController: _smsController,
+                )),
+      );
     }
 
     codeAutoRetrievalTimeout(String verificationId) {
@@ -92,7 +102,7 @@ class _SignInScreenState extends State<SignInScreen> {
     }
 
     await _firebaseAuth.verifyPhoneNumber(
-      phoneNumber: "+91${mobileNumber.text}",
+      phoneNumber: countryCodeText + mobileNumber.text,
       timeout: const Duration(seconds: 60),
       verificationCompleted: verificationCompleted,
       verificationFailed: verificationFailed,
@@ -141,7 +151,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 child: TextFormField(
                   controller: mobileNumber,
                   keyboardType: TextInputType.phone,
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                   validator: (value) {
                     if (value == null) {
                       return "Please Enter Your Phone Number";
@@ -154,16 +164,17 @@ class _SignInScreenState extends State<SignInScreen> {
                   decoration: commonInputDecoration(
                     hintText: "Enter mobile number",
                     prefixIcon: Padding(
-                      padding: EdgeInsets.only(right: 10),
+                      padding: const EdgeInsets.only(right: 10),
                       child: GestureDetector(
                         onTap: () async {
                           final code = await countryPicker.showPicker(
                             context: context,
                           );
-                          if (code != null)
+                          if (code != null) {
                             setState(() {
                               countryCodeText = code.dialCode;
                             });
+                          }
                           // print(code.flagImage);
                         },
                         child: Container(
@@ -203,16 +214,8 @@ class _SignInScreenState extends State<SignInScreen> {
                         : Colors.black,
                   ),
                   onPressed: () async {
-                    _verifyPhoneNumber();
                     if (_loginFormKey.currentState!.validate()) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => OTPVerificationScreen(
-                                verificationIds: verificationIds,
-                                isLogin: true,
-                                smsController: _smsController)),
-                      );
+                      _verifyPhoneNumber();
                     }
                   },
                   child: const Text("Log In",

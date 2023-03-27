@@ -1,6 +1,8 @@
 import 'dart:async';
-import 'package:aelius_customer/screens/dashboard_screen.dart';
+
+import 'package:aelius_customer/screens/sign_in_screen.dart';
 import 'package:flutter/material.dart';
+
 import '../models/banner_model.dart';
 import '../utils/api_list.dart';
 import '../utils/images.dart';
@@ -24,7 +26,7 @@ class _BannerScreenState extends State<BannerScreen> {
       setState(() {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const DashBoardScreen()),
+          MaterialPageRoute(builder: (context) => const SignInScreen()),
         );
       });
     });

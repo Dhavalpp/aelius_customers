@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:aelius_customer/screens/sign_in_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,7 +40,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _refralCode = TextEditingController();
   final TextEditingController _smsController = TextEditingController();
 
-  // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   bool? agreeWithTeams = false;
   final bool _securePassword = true;
   bool _secureConfirmPassword = true;
@@ -148,49 +149,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  // Future<void> _verifyPhoneNumber() async {
-  //   final PhoneVerificationCompleted verificationCompleted =
-  //       (AuthCredential phoneAuthCredential) async {
-  //     await FirebaseAuth.instance.signInWithCredential(phoneAuthCredential);
+  Future<void> _verifyPhoneNumber() async {
+    verificationCompleted(AuthCredential phoneAuthCredential) async {
+      await FirebaseAuth.instance.signInWithCredential(phoneAuthCredential);
 
-  //     // Do something after the user is signed in
-  //   };
+      // Do something after the user is signed in
+    }
 
-  //   final PhoneVerificationFailed verificationFailed =
-  //       (FirebaseAuthException authException) {
-  //     print(
-  //         'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
-  //   };
+    verificationFailed(FirebaseAuthException authException) {
+      print(
+          'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
+    }
 
-  //   final PhoneCodeSent codeSent =
-  //       (String verificationId, [int? forceResendingToken]) {
-  //     print('Please check your phone for the verification code.');
-  //     this.verificationIds = verificationId;
-  //   };
+    codeSent(String verificationId, [int? forceResendingToken]) {
+      print('Please check your phone for the verification code.');
+      this.verificationIds = verificationId;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => OTPVerificationScreen(
+                  verificationIds: verificationIds,
+                  isLogin: false,
+                  smsController: _smsController,
+                  mobileController: _phoneController.text,
+                  imagess: _image,
+                  nameController: _nameController.text,
+                  refrealController: _refralCode.text,
+                  emailController: _emailController.text,
+                  addressController: _addressContainer.text,
+                )),
+      );
+    }
 
-  //   final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
-  //       (String verificationId) {
-  //     this.verificationIds = verificationId;
-  //   };
+    codeAutoRetrievalTimeout(String verificationId) {
+      this.verificationIds = verificationId;
+    }
 
-  //   await _firebaseAuth.verifyPhoneNumber(
-  //     phoneNumber: "+91" + _phoneController.text,
-  //     timeout: const Duration(seconds: 60),
-  //     verificationCompleted: verificationCompleted,
-  //     verificationFailed: verificationFailed,
-  //     codeSent: codeSent,
-  //     codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
-  //   );
-  // }
-
-  // void _showCountryPicker() async {
-  // final country = await showCountryPickerSheet(context);
-  // if (country != null) {
-  //   setState(() {
-  //     _selectedCountry = country;
-  //   });
-  // }
-  // }
+    await _firebaseAuth.verifyPhoneNumber(
+      phoneNumber: "+91" + _phoneController.text,
+      timeout: const Duration(seconds: 60),
+      verificationCompleted: verificationCompleted,
+      verificationFailed: verificationFailed,
+      codeSent: codeSent,
+      codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
+    );
+  }
 
   Future<void> _showAlertDialog() async {
     return showDialog<void>(
@@ -379,15 +382,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     backContainer(Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text(
+                      children: [
+                        const Text(
                           "Gender",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
                         ),
-                        DropDownMenu(gender: true),
+                        DropDownMenu(gender: true, isregion: false),
                       ],
                     )),
                     const Space(16),
@@ -408,15 +411,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
+                        children: [
+                          const Text(
                             "Area of Residence",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
                             ),
                           ),
-                          DropDownMenu(gender: false),
+                          DropDownMenu(gender: false, isregion: true),
                         ],
                       ),
                     ),
@@ -466,16 +469,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         onPressed: () {
                           if (_signUpFormKey.currentState!.validate()) {
                             if (agreeWithTeams == true) {
-                              // _verifyPhoneNumber();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => OTPVerificationScreen(
-                                          verificationIds: verificationIds,
-                                          isLogin: false,
-                                          smsController: _smsController,
-                                        )),
-                              );
+                              _verifyPhoneNumber();
                             } else {
                               _showAlertDialog();
                             }

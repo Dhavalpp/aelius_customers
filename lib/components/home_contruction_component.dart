@@ -54,25 +54,25 @@ class HomeConstructionComponentState extends State<HomeConstructionComponent> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ServiceProvidersScreen(
-                      index: index,
-                      servicesss: false,
-                    )),
-              );
-            },
-            child: Card(
-              elevation: 3,
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(3),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      color: textFieldColor,
-                      child: homeConstruction[index].iconPath,
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ServiceProvidersScreen(
+                                    index: index,
+                                    servicesss: false,
+                                  )),
+                        );
+                      },
+                      child: Card(
+                        elevation: 3,
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(3),
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                color: textFieldColor,
+                                child: homeConstruction[index].iconPath,
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -101,7 +101,7 @@ class HomeConstructionComponentState extends State<HomeConstructionComponent> {
                       );
                     },
                     child: Card(
-                elevation: 3,
+                      elevation: 3,
                       color: Colors.teal,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
@@ -139,13 +139,13 @@ class HomeConstructionComponentState extends State<HomeConstructionComponent> {
                           )),
                           // const Space(5),
                         ],
+                      ),
+                    ),
+                  ),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                  ),
                 ),
-              ),
-            ),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-        ),
-      ),
     );
   }
 }

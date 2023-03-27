@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:aelius_customer/screens/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,10 +7,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
 
-// import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
-
 import '../custom_widget/space.dart';
 import '../main.dart';
+import '../utils/api_list.dart';
 import '../utils/colors.dart';
 import '../utils/constant.dart';
 import 'dashboard_screen.dart';
@@ -18,11 +18,31 @@ class OTPVerificationScreen extends StatefulWidget {
   String? verificationIds;
   TextEditingController smsController;
   bool isLogin;
+  String mobileController;
+  String? nameController,
+      emailController,
+      addressController,
+      region,
+      gender,
+      date,
+      refrealController;
+
+  File? imagess;
+
   OTPVerificationScreen(
       {Key? key,
       required this.verificationIds,
       required this.isLogin,
-      required this.smsController})
+      this.imagess,
+      required this.smsController,
+      this.region,
+      this.nameController,
+      this.emailController,
+      this.addressController,
+      required this.mobileController,
+      this.refrealController,
+      this.gender,
+      this.date})
       : super(key: key);
 
   @override
@@ -63,13 +83,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         color: Colors.black12);
   }
 
-  // get signature code
-  // _getSignatureCode() async {
-  //   String? signature = await SmsVerification.getAppSignature();
-  //   print("signature $signature");
-  // }
-
-  // / listen sms
   _startListeningSms() {
     SmsVerification.startListeningSms().then((message) {
       setState(() {
@@ -78,17 +91,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         _onOtpCallBack(_otpCode!, true);
       });
     });
-  }
-
-  _onSubmitOtp() {
-    setState(() {
-      _isLoadingButton = !_isLoadingButton;
-      _verifyOtpCode();
-    });
-  }
-
-  _onClickRetry() {
-    _startListeningSms();
   }
 
   _onOtpCallBack(String otpCode, bool isAutofill) {
@@ -115,7 +117,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         _enableButton = false;
       });
     });
-    // _signInWithPhoneNumber();
+    _signInWithPhoneNumber();
   }
 
   Future<void> _signInWithPhoneNumber() async {
@@ -133,6 +135,17 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
             MaterialPageRoute(builder: (context) => DashBoardScreen()),
           );
         } else {
+          registerUser(
+            widget.imagess!,
+            widget.nameController!,
+            widget.mobileController,
+            widget.emailController!,
+            widget.date!,
+            widget.gender!,
+            widget.addressController!,
+            widget.region!,
+            widget.refrealController!,
+          );
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => SignInScreen()),

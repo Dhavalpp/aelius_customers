@@ -1,13 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 import '../main.dart';
 import 'drop_down_menu.dart';
 
 class ServicesRequestDialogWithCategory extends StatefulWidget {
   bool nearestser;
-
   ServicesRequestDialogWithCategory({
     required this.nearestser,
     super.key,
@@ -64,33 +64,31 @@ class _ServicesRequestDialogWithCategoryState
     }
   }
 
-  //
-  // _showBottomSheet(BuildContext context) {
-  //   showModalBottomSheet(
-  //     backgroundColor: Colors.white,
-  //     context: context,
-  //     elevation: 3,
-  //     builder: (BuildContext context) {
-  //       return Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         crossAxisAlignment: CrossAxisAlignment.stretch,
-  //         children: <Widget>[
-  //           Text(
-  //             "Best Services Provider Will Contact Soon....",
-  //             style: TextStyle(
-  //                 fontSize: 20,
-  //                 color: appData.isDark ? Colors.white : Colors.black,
-  //                 fontStyle: FontStyle.normal,
-  //                 fontWeight: FontWeight.bold),
-  //           )
-  //         ],
-  //       ).paddingAll(10.0);
-  //     },
-  //   );
-  // }
-  //
-  // This method is called when the member clicks on the ACCEPT button.
+  _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      backgroundColor: Colors.white,
+      context: context,
+      elevation: 3,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Text(
+              "Best Services Provider Will Contact Soon....",
+              style: TextStyle(
+                  fontSize: 20,
+                  color: appData.isDark ? Colors.white : Colors.black,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.bold),
+            )
+          ],
+        ).paddingAll(10.0);
+      },
+    );
+  }
 
+  // This method is called when the member clicks on the ACCEPT button.
   void _acceptRequest() {
     setState(() {
       _isAccepted = true;
@@ -121,7 +119,8 @@ class _ServicesRequestDialogWithCategoryState
                         )),
                     Container(
                         decoration: const BoxDecoration(),
-                        child: const DropDownMenu(
+                        child: DropDownMenu(
+                          isregion: false,
                           gender: false,
                         )),
                     const SizedBox(height: 10),

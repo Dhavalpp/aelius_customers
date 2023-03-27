@@ -6,8 +6,9 @@ import '../models/category.dart';
 
 class DropDownMenu extends StatefulWidget {
   final bool gender;
+  bool isregion;
 
-  const DropDownMenu({super.key, required this.gender});
+  DropDownMenu({super.key, required this.isregion, required this.gender});
 
   @override
   State<DropDownMenu> createState() => _DropDownMenuState();
@@ -50,7 +51,7 @@ class _DropDownMenuState extends State<DropDownMenu> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(),
-      child: widget.gender == false
+      child: widget.gender == false && widget.isregion == false
           ? DropdownButton(
               // hint: const Text('Select a category'),
               value: _selectedCategory,
@@ -73,21 +74,44 @@ class _DropDownMenuState extends State<DropDownMenu> {
                           ))
                       .toList(),
             )
-          : DropdownButton(
-        value: _selectedItem,
-        items: _dropDownItems
-            .map((item) => DropdownMenuItem(
-          value: item,
-          child: Text(item),
-        ))
-            .toList(),
-        elevation: 3,
-        onChanged: (value) {
-          setState(() {
-            _selectedItem = value.toString();
-          });
-        },
-      ),
+          : widget.gender == false && widget.isregion == true
+              ? DropdownButton(
+                  // hint: const Text('Select a category'),
+                  value: _selectedCategory,
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedCategory = newValue.toString();
+                    });
+                  },
+                  items: category_list.isNotEmpty
+                      ? category_list.map((category) {
+                          return DropdownMenuItem(
+                            value: category.name,
+                            child: Text(category.name),
+                          );
+                        }).toList()
+                      : _dropDownItems
+                          .map((item) => DropdownMenuItem(
+                                value: item,
+                                child: Text(item),
+                              ))
+                          .toList(),
+                )
+              : DropdownButton(
+                  value: _selectedItem,
+                  items: _dropDownItems
+                      .map((item) => DropdownMenuItem(
+                            value: item,
+                            child: Text(item),
+                          ))
+                      .toList(),
+                  elevation: 3,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedItem = value.toString();
+                    });
+                  },
+                ),
     );
   }
 }
