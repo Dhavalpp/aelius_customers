@@ -18,13 +18,12 @@ class MediaPostList {
 
   int status;
   String message;
-  List<ListPosts> data;
+  List<Datum> data;
 
   factory MediaPostList.fromJson(Map<String, dynamic> json) => MediaPostList(
         status: json["status"],
         message: json["message"],
-        data: List<ListPosts>.from(
-            json["Data"].map((x) => ListPosts.fromJson(x))),
+        data: List<Datum>.from(json["Data"].map((x) => Datum.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -34,39 +33,57 @@ class MediaPostList {
       };
 }
 
-class ListPosts {
-  ListPosts({
+class Datum {
+  Datum({
     required this.id,
-    required this.memberId,
-    required this.desription,
+    this.memberId,
+    this.desription,
     required this.image,
     required this.video,
     required this.createdAt,
   });
 
   int id;
-  int memberId;
-  String desription;
-  List<String> image;
+  int? memberId;
+  String? desription;
+  Image image;
   String video;
   DateTime createdAt;
 
-  factory ListPosts.fromJson(Map<String, dynamic> json) => ListPosts(
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
         id: json["id"],
         memberId: json["member_id"],
         desription: json["desription"],
-        image: List<String>.from(json["image"].map((x) => x)),
+        image: imageValues.map[json["image"]]!,
         video: json["video"],
         createdAt: DateTime.parse(json["created_at"]),
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "member_id": memberId,
         "desription": desription,
-        "image": List<dynamic>.from(image.map((x) => x)),
+        "image": imageValues.reverse[image],
         "video": video,
         "created_at": createdAt.toIso8601String(),
       };
+}
+
+enum Image { EMPTY, THE_1678708457_PNG_1678708457_PNG }
+
+final imageValues = EnumValues({
+  "": Image.EMPTY,
+  "1678708457.png,1678708457.png": Image.THE_1678708457_PNG_1678708457_PNG
+});
+
+class EnumValues<T> {
+  Map<String, T> map;
+  late Map<T, String> reverseMap;
+
+  EnumValues(this.map);
+
+  Map<T, String> get reverse {
+    reverseMap = map.map((k, v) => MapEntry(v, k));
+    return reverseMap;
+  }
 }

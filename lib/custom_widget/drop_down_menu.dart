@@ -26,7 +26,7 @@ class _DropDownMenuState extends State<DropDownMenu> {
     'Morbi'
   ];
 
-  late List<Datum> category_list;
+  List<CategoryDatum> category_list = [];
   String _selectedCategory = "plumber";
 
   String _selectedItem = 'Male';
@@ -59,6 +59,7 @@ class _DropDownMenuState extends State<DropDownMenu> {
                 setState(() {
                   _selectedCategory = newValue.toString();
                 });
+                _handleOptionSelection(_selectedCategory);
               },
               items: category_list.isNotEmpty
                   ? category_list.map((category) {
@@ -113,5 +114,9 @@ class _DropDownMenuState extends State<DropDownMenu> {
                   },
                 ),
     );
+  }
+
+  void _handleOptionSelection(String? selectedOption) {
+    print('Selected option: $selectedOption');
   }
 }

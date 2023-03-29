@@ -1,15 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/images.dart';
 
-
-class SocialMediaCard extends StatelessWidget {
+class SocialMediaCard extends StatefulWidget {
   String profileImageUrl;
   String name;
+  final List<String> postImages;
 
   // String headline;
   String postTime;
-  String postContent;
+  String? postContent;
 
   SocialMediaCard({
     super.key,
@@ -21,8 +22,12 @@ class SocialMediaCard extends StatelessWidget {
     required this.postImages,
   });
 
-  final List<String> postImages;
+  @override
+  State<SocialMediaCard> createState() => _SocialMediaCardState();
+}
 
+class _SocialMediaCardState extends State<SocialMediaCard>
+    with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -37,8 +42,7 @@ class SocialMediaCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const CircleAvatar(
-                  backgroundImage:
-                  AssetImage(userImage),
+                  backgroundImage: AssetImage(userImage),
                   // NetworkImage(profileImageUrl),
                   radius: 20.0,
                 ),
@@ -48,13 +52,13 @@ class SocialMediaCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        name,
+                        widget.name,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       // Text(headline),
                       const SizedBox(height: 4.0),
                       Text(
-                        postTime,
+                        widget.postTime,
                         style: const TextStyle(color: Colors.grey),
                       ),
                     ],
@@ -68,12 +72,12 @@ class SocialMediaCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              postContent,
+              widget.postContent!,
             ),
           ),
           // Image.asset("assets/images/plumber.jpg"),
-          postImages.isNotEmpty
-              ? LinkedInPostImages(imageUrls: postImages)
+          widget.postImages.isNotEmpty
+              ? LinkedInPostImages(imageUrls: widget.postImages)
               : const SizedBox.shrink(),
           const SizedBox(height: 8.0),
           const Divider(height: 1.0),
@@ -129,7 +133,6 @@ class LinkedInPostImages extends StatelessWidget {
 
   const LinkedInPostImages({super.key, required this.imageUrls});
 
-
   @override
   Widget build(BuildContext context) {
     return GridView.count(
@@ -137,18 +140,18 @@ class LinkedInPostImages extends StatelessWidget {
       crossAxisSpacing: 4.0,
       mainAxisSpacing: 4.0,
       shrinkWrap: true,
-      physics:const NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       children: List.generate(imageUrls.length, (index) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.blueAccent,
-            image: DecorationImage(
-
-              image: index == 0 || index == 2 || index == 4 ?const AssetImage(
-                  userImage) :const AssetImage(electrician),
-
-
-              // AssetImage(imageUrls[index]),
+        return CachedNetworkImage(
+          imageUrl: imageUrls[index],
+          fit: BoxFit.cover,
+          height: 150,
+          width: 100,
+          placeholder: (context, url) =>
+              const Center(child: CircularProgressIndicator()),
+          errorWidget: (context, url, error) => Center(
+            child: Image.asset(
+              userImage,
               fit: BoxFit.cover,
             ),
           ),

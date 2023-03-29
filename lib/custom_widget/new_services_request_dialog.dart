@@ -1,5 +1,6 @@
 import 'package:aelius_customer/utils/api_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../main.dart';
 import 'drop_down_menu.dart';
@@ -55,6 +56,7 @@ class _NewServicesRequestDialogState extends State<NewServicesRequestDialog> {
                             scheduleBooking("2", "doctor", "2023-08-22",
                                 "11:00", "booking service");
                             _isAccepted = true;
+                            _showNotification();
                           },
                           child: const Text('ACCEPT'),
                         ),
@@ -96,5 +98,22 @@ class _NewServicesRequestDialogState extends State<NewServicesRequestDialog> {
         ),
       ),
     );
+  }
+
+  void _showNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            "CustomerImmediate", "Your Services is Requested",
+            importance: Importance.max,
+            priority: Priority.high,
+            showWhen: false);
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        014,
+        'Your Services is Requested',
+        'Requested services of $categoryUrl',
+        platformChannelSpecifics,
+        payload: 'item x');
   }
 }

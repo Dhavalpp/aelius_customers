@@ -1,18 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../components/home_contruction_component.dart';
-import '../components/room_service_component.dart';
 import '../custom_widget/new_services_request_dialog.dart';
 import '../custom_widget/service_request_dialog_with_category.dart';
 import '../custom_widget/space.dart';
 import '../main.dart';
 import '../models/banner_list_model.dart';
+import '../models/user_model.dart';
 import '../screens/reward_point_screen.dart';
 import '../utils/api_list.dart';
 import '../utils/images.dart';
-import '../utils/widget.dart';
+import '../utils/shared_pref.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -31,11 +32,28 @@ class _HomeState extends State<Home> {
   final reviewPagesController =
       PageController(viewportFraction: 0.93, keepPage: true, initialPage: 1);
 
+  late UserModel? userModels;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    sharePreferenceData();
+  }
+
   @override
   void dispose() {
     offerPagesController.dispose();
     reviewPagesController.dispose();
     super.dispose();
+  }
+
+  Future<dynamic> sharePreferenceData() async {
+    UserModel? userData = await SharedPref().getSharedPreferences();
+    setState(() {
+      userModels = userData;
+      print(userModels!.detail[0].fullName);
+    });
   }
 
   @override
@@ -60,14 +78,7 @@ class _HomeState extends State<Home> {
                       itemBuilder: (context, index) {
                         final banner = banners[index];
                         return Center(
-                          child:
-                              //   FadeInImage(
-                              // image: NetworkImage(banner.image),
-                              // fit: BoxFit.cover,
-                              // placeholder: const AssetImage(banner1),
-                              // ),
-                              //
-                              CachedNetworkImage(
+                          child: CachedNetworkImage(
                             imageUrl: banner.image,
                             fit: BoxFit.cover,
                             height: double.infinity,
@@ -91,24 +102,7 @@ class _HomeState extends State<Home> {
                 },
               ),
             ),
-            //   child: PageView.builder(
-            //     controller: offerPagesController,
-            //     itemCount: bannerList.length,
-            //     itemBuilder: (context, index) {
-            //       return GestureDetector(
-            //         onTap: () {},
-            //         child: Padding(
-            //           padding: const EdgeInsets.all(8),
-            //           child: ClipRRect(
-            //             borderRadius: BorderRadius.circular(8),
-            //             child:
-            //                 Image.asset(bannerList[index], fit: BoxFit.cover),
-            //           ),
-            //         ),
-            //       );
-            //     },
-            //   ),
-            // ),
+
             SmoothPageIndicator(
               controller: offerPagesController,
               count: 3,
@@ -132,11 +126,11 @@ class _HomeState extends State<Home> {
               ),
             ),
             const Space(18),
-            homeTitleWidget(
-              titleText: "Electrical Services",
-            ),
-            const Space(10),
-            const RoomServiceComponent(),
+            // homeTitleWidget(
+            //   titleText: "Electrical Services",
+            // ),
+            // const Space(10),
+            // const RoomServiceComponent(),
             const Space(10),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -148,6 +142,23 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  void _showNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            "CustomerImmediate", "Your Services is Requested",
+            importance: Importance.max,
+            priority: Priority.high,
+            showWhen: false);
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        014,
+        'Your Services is Requested',
+        'Requested services of $categoryUrl',
+        platformChannelSpecifics,
+        payload: 'item x');
   }
 
   SizedBox iconSizebox(String sizeicons, String sizeText, int sizeid) {

@@ -1,5 +1,6 @@
+import 'dart:developer';
+
 import 'package:aelius_customer/screens/splash_screen.dart';
-import 'package:aelius_customer/utils/shared_pref.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,8 @@ import 'utils/colors.dart';
 import 'utils/constant.dart';
 
 AppData appData = AppData();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,15 +23,24 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackground);
 //   SystemChrome.setPreferredOrientations(
 //       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  // ...initialize settings...
-  await flutterLocalNotificationsPlugin.initialize(
-    const InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      // iOS: IOSInitializationSettings(),
-    ),
+  AndroidInitializationSettings androidSetting =
+      const AndroidInitializationSettings('@mipmap/ic_launcher');
+  DarwinInitializationSettings iosSetting = const DarwinInitializationSettings(
+    requestBadgePermission: true,
+    requestCriticalPermission: true,
+    requestSoundPermission: true,
+    requestAlertPermission: true,
   );
+  InitializationSettings initializationSettings =
+      InitializationSettings(iOS: iosSetting, android: androidSetting);
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  bool? initilized =
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  log("Notification: $initilized");
+
   runApp(const MyApp());
 }
 
@@ -52,7 +64,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: appName,
           theme: ThemeData.light().copyWith(
-            colorScheme:const ColorScheme(
+            colorScheme: ColorScheme(
               brightness: Brightness.light,
               primary: primaryColor,
               onPrimary: whiteColor,
@@ -67,12 +79,12 @@ class MyApp extends StatelessWidget {
             ),
             primaryColor: primaryColor,
             secondaryHeaderColor: whiteColor,
-            iconTheme:const IconThemeData(color: primaryColor),
-            tabBarTheme:const TabBarTheme(labelColor: Colors.black),
-            listTileTheme:const ListTileThemeData(iconColor: blackColor),
+            iconTheme: const IconThemeData(color: primaryColor),
+            tabBarTheme: const TabBarTheme(labelColor: Colors.black),
+            listTileTheme: const ListTileThemeData(iconColor: blackColor),
             brightness: Brightness.light,
             dividerColor: transparent,
-            appBarTheme:const AppBarTheme(
+            appBarTheme: const AppBarTheme(
               iconTheme: IconThemeData(color: primaryColor),
               titleTextStyle: TextStyle(color: primaryColor),
               systemOverlayStyle: SystemUiOverlayStyle(
@@ -85,7 +97,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
           darkTheme: ThemeData.dark().copyWith(
-            colorScheme:const ColorScheme(
+            colorScheme: const ColorScheme(
               brightness: Brightness.light,
               primary: Colors.black,
               onPrimary: Colors.white,
@@ -100,12 +112,12 @@ class MyApp extends StatelessWidget {
             ),
             primaryColor: whiteColor,
             secondaryHeaderColor: primaryColor,
-            iconTheme:const IconThemeData(color: whiteColor),
+            iconTheme: const IconThemeData(color: whiteColor),
             brightness: Brightness.dark,
-            tabBarTheme:const TabBarTheme(labelColor: Colors.white),
-            listTileTheme:const ListTileThemeData(iconColor: whiteColor),
+            tabBarTheme: const TabBarTheme(labelColor: Colors.white),
+            listTileTheme: const ListTileThemeData(iconColor: whiteColor),
             dividerColor: transparent,
-            dialogTheme:const DialogTheme(
+            dialogTheme: const DialogTheme(
               backgroundColor: Colors.grey,
               titleTextStyle: TextStyle(
                 color: blackColor,
@@ -114,7 +126,7 @@ class MyApp extends StatelessWidget {
               ),
               contentTextStyle: TextStyle(color: Colors.black),
             ),
-            expansionTileTheme:const ExpansionTileThemeData(
+            expansionTileTheme: const ExpansionTileThemeData(
                 iconColor: whiteColor, textColor: whiteColor),
             bottomNavigationBarTheme: BottomNavigationBarThemeData(
               backgroundColor: Colors.black,

@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import '../custom_widget/social_media_card.dart';
 import '../models/media_post_list.dart';
@@ -17,85 +19,83 @@ class BookingsFragment extends StatefulWidget {
 
 class _BookingsFragmentState extends State<BookingsFragment>
     with SingleTickerProviderStateMixin {
-  // List<ListPosts> _listPost = [];
+  List<Datum> _listPost = [];
 
-// List postIMages=[ { painter,sofa, bathroom,}];
+  double screenHeight = 0.0;
+  double screenWidth = 0.0;
 
-  List postname = [
-    {"Rakesh Varme", "Ramesh Pipariya", "Uday Singh"},
-  ];
-  List titlename = [
-    {"2d", "3d", "4d"},
-  ];
-  List headlinename = [
-    {"", "Ramesh Pipariya", "Uday Singh"},
-  ];
-  List contentname = [
-    {
-      "Lorem Ipsum is simply dummy text",
-      "Lorem Ipsum is simply dummy text 12548",
-      "Lorem Ipsum is simply dummy text 125"
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchMedia();
+  }
+
+  Future<void> _fetchMedia() async {
+    var url = Uri.parse(mediaListUrl);
+    var response = await http.post(url);
+
+    if (response.statusCode == 200) {
+      final data = mediaPostListFromJson(response.body);
+      if (kDebugMode) {
+        print(data.data);
+      }
+      setState(() {
+        _listPost = data.data;
+      });
+    } else {
+      throw Exception('Failed to load categories');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      //    floatingActionButton: FloatingActionButton.extended(
-      //     backgroundColor: Colors.blue.shade500,
-      //   onPressed: () {
-      //     showDialog(
-      //       context: context,
-      //       builder: (context) =>    const AddMediaPage()      );
-      //   },
-      //   icon:const  Icon(Icons.add,color: Colors.white,),
-      //   label: const Text("POST",style: TextStyle(color: Colors.white),),
-      // ),
-
-      // floatingActionButton: FloatingActionButton(onPressed: () {
-      //    Navigator.push(
-      //         context,
-      //         MaterialPageRoute(
-      //             builder: (context) =>AddMediaPage()),
-      //       );
-
-      // },
-      // child: Center(child: Icon(Icons.add,color: Colors.white),)),
-      body: FutureBuilder<MediaPostList>(
-        future: h2hMediaPostList(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final posts = snapshot.data!.data;
-            return ListView.builder(
-              itemCount: posts.length,
-              itemBuilder: (context, index) {
-                if (posts.isNotEmpty) {
-                  print(posts[0].id);
-                  return SocialMediaCard(
-                    postImages: posts[1].image,
-                    profileImageUrl: userImage,
-                    name: posts[1].memberId.toString(),
-                    postTime: posts[1].createdAt.toString(),
-                    postContent: posts[1].desription,
-                  );
-                  // return Text(posts[index].desription);
-                } else {
-                  return Container();
-                }
-              },
+      body: SizedBox(
+        height: screenHeight,
+        child: ListView.builder(
+          itemCount: _listPost.length,
+          itemBuilder: (context, index) {
+            // if (_listPost.isNotEmpty) {
+            //   print(_listPost[index].id);
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SocialMediaCard(
+                postImages: [_listPost[index].image.toString()],
+                profileImageUrl: userImage,
+                name: _listPost[index].id.toString(),
+                postTime: _listPost[index].createdAt.toString(),
+                postContent: _listPost[index].desription,
+              ),
             );
-          } else if (snapshot.hasError) {
-            print(snapshot.error);
-            return const Center(
-              child: Text('Failed to fetch posts'),
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
+            // return Text(posts[index].desription);
+            // } else {
+            //   return Container();
+            // }
+          },
+        ),
       ),
+
+      // FutureBuilder<MediaPostList>(
+      //   future: h2hMediaPostList(),
+      //   builder: (context, snapshot) {
+      //     if (snapshot.hasData) {
+      //       final posts = snapshot.data!.data;
+      //
+      //     } else if (snapshot.hasError) {
+      //       print(snapshot.error);
+      //       return const Center(
+      //         child: Text('Failed to fetch posts'),
+      //       );
+      //     } else {
+      //       return const Center(
+      //         child: CircularProgressIndicator(),
+      //       );
+      //     }
+      //   },
+      // ),
       // ListView.builder(
       //   itemCount: 3,
       //   itemBuilder: (context, index) {
@@ -122,3 +122,5 @@ class _BookingsFragmentState extends State<BookingsFragment>
     );
   }
 }
+
+// class _BookingsFr/objectagmentState

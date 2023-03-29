@@ -5,10 +5,10 @@ import 'package:http/http.dart' as http;
 
 import '../custom_widget/space.dart';
 import '../models/category.dart';
-import '../models/home_construction_model.dart';
+import '../models/user_model.dart';
 import '../screens/service_providers_screen.dart';
-import '../utils/colors.dart';
 import '../utils/images.dart';
+import '../utils/shared_pref.dart';
 
 class HomeConstructionComponent extends StatefulWidget {
   bool iconlist;
@@ -21,12 +21,23 @@ class HomeConstructionComponent extends StatefulWidget {
 }
 
 class HomeConstructionComponentState extends State<HomeConstructionComponent> {
-  List<Datum> category_list = [];
+  List<CategoryDatum> category_list = [];
 
   @override
   void initState() {
     super.initState();
     _fetchCategorie();
+    sharePreferenceData();
+  }
+
+  late UserModel? userModels;
+
+  Future<dynamic> sharePreferenceData() async {
+    UserModel? userData = await SharedPref().getSharedPreferences();
+    setState(() {
+      userModels = userData;
+      print(userModels!.detail[0].fullName);
+    });
   }
 
   Future<void> _fetchCategorie() async {
@@ -45,42 +56,59 @@ class HomeConstructionComponentState extends State<HomeConstructionComponent> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 380,
+      height: 400,
       child:
-      //
-      widget.iconlist == false
-          ? ListView.builder(
-        itemCount: homeConstruction.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ServiceProvidersScreen(
-                                    index: index,
-                                    servicesss: false,
-                                  )),
-                        );
-                      },
-                      child: Card(
-                        elevation: 3,
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(3),
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                color: textFieldColor,
-                                child: homeConstruction[index].iconPath,
-                              ),
+          //
+          widget.iconlist == false
+              ? ListView.builder(
+                  itemCount: category_list.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ServiceProvidersScreen(
+                                        index: category_list[index].id,
+                                        servicesss: false,
+                                      )),
+                            );
+                            print(category_list[index].id);
+                          },
+                          child: Card(
+                            elevation: 8,
+                            margin: const EdgeInsets.all(8),
+                            child: Row(
+                              children: [
+                                CachedNetworkImage(
+                                  imageUrl: category_list[index].file,
+                                  fit: BoxFit.cover,
+                                  height: 70,
+                                  width: 70,
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) => Center(
+                                    child:
+                                        Image.asset(banner1, fit: BoxFit.cover),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                FittedBox(
+                                    child: Text(
+                                  category_list[index].name,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      fontStyle: FontStyle.normal,
+                                      color: Colors.black),
+                                )),
+                              ],
                             ),
-                            const SizedBox(width: 10),
-                            FittedBox(
-                                child: Text(homeConstruction[index].title)),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     );
                   },
                 )

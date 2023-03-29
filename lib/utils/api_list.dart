@@ -1,17 +1,21 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:aelius_customer/models/media_post_list.dart';
+import 'package:aelius_customer/models/services_list_model.dart';
 import 'package:aelius_customer/utils/shared_pref.dart';
 import 'package:http/http.dart' as http;
+
 import '../models/banner_list_model.dart';
 import '../models/banner_model.dart';
 import '../models/category.dart';
+import '../models/rewarded_model.dart';
 import '../models/user_model.dart';
-import '../screens/dashboard_screen.dart';
 
 String baseUrl = 'http://imusiccompany.com/api/';
 String categoryUrl = '${baseUrl}categories';
+String servicesListUrl = '${baseUrl}spacific_member';
 String bannerUrl = '${baseUrl}banner';
 String registerUrl = '${baseUrl}member/insert';
 String loginUrl = '${baseUrl}login';
@@ -24,13 +28,13 @@ String findnearURL = '${baseUrl}member/find_near';
 String favoriteURL = '${baseUrl}member/favourite';
 String commentUrl = '${baseUrl}media/comment';
 String mediaListUrl = '${baseUrl}media/medialist';
+String rewardedUrl = '${baseUrl}customer/rewardhistory';
 
 Future<Category> fetchCategories() async {
   final response = await http.get(Uri.parse(categoryUrl));
   var data = jsonDecode(response.body);
   if (response.statusCode == 200) {
     var jsons = Category.fromJson(data);
-    print(jsons.data);
     return Category.fromJson(jsonDecode(response.body));
     // return Category(status: json.status, message:json.message, data:json.data);
   } else {
@@ -47,8 +51,6 @@ Future<BannerModel> forntPageBanner() async {
   var data = jsonDecode(responses.body);
   if (responses.statusCode == 200) {
     var bannerModels = BannerModel.fromJson(data);
-    print(bannerModels.data[0].image);
-    print(responses.body);
     return BannerModel.fromJson(jsonDecode(responses.body));
   } else {
     throw Exception('Failed to load Banner');
@@ -81,11 +83,12 @@ Future<BannerListModel> fetchBannerList() async {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
-      body: jsonEncode(<String, String>{'banner_for': 'member'}));
+      body: jsonEncode(<String, String>{'banner_for': 'customer'}));
   var data = jsonDecode(responses.body);
   if (responses.statusCode == 200) {
     var bannerModels = BannerListModel.fromJson(data);
     print(bannerModels.data[0].image);
+    print(responses.body);
     return BannerListModel.fromJson(jsonDecode(responses.body));
   } else {
     throw Exception('Failed to load Banner');
@@ -310,20 +313,54 @@ Future findnear(
   }
 }
 
-//
-// Future rewardHistory(String referral_code  ) async {
-//   final responses = await http.post(Uri.parse(schedulaebookingURL),
-//       headers: <String, String>{
-//         'Content-Type': 'application/json; charset=UTF-8'
-//       },
-//       body: jsonEncode(<String, String>{
-//         'referral_code': referral_code,
-//       }));
-//   var data = jsonDecode(responses.body);
-//   if (responses.statusCode == 200) {
-//     print(responses.body);
-//     return "success";
-//   } else {
-//     throw Exception('Failed to load Banner');
-//   }
-// }
+Future<RewardedModel> rewardHistory(String referral_code) async {
+  final responses = await http.post(Uri.parse(rewardedUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(<String, String>{
+        'referral_code': referral_code,
+      }));
+  var data = jsonDecode(responses.body);
+  if (responses.statusCode == 200) {
+    print(responses.body);
+
+    var rewardedmodels = RewardedModel.fromJson(data);
+    print(rewardedmodels);
+    return RewardedModel.fromJson(jsonDecode(responses.body));
+  } else {
+    throw Exception('Failed to load Banner');
+  }
+}
+
+Future<ServicesDatum> servicesList(String categoryId) async {
+  final responses =
+      await http.post(Uri.parse("http://imusiccompany.com/api/spacific_member"),
+          body: jsonEncode(<String, String>{
+            'category_id': "11",
+          }));
+  var data = jsonDecode(responses.body);
+  if (responses.statusCode == 200) {
+    print(responses.body);
+    print(responses.body.length);
+
+    var servicessss = ServicesDatum.fromJson(data);
+    print(servicessss);
+    return ServicesDatum.fromJson(jsonDecode(responses.body));
+  } else {
+    throw Exception('Failed to load Banner');
+  }
+}
+
+Future<void> callSpecificMemberAPI() async {
+  var url = Uri.parse('http://imusiccompany.com/api/spacific_member');
+  var response = await http.post(url, body: {
+    'category_id': '11',
+  });
+
+  if (response.statusCode == 200) {
+    // Save the response to shared preferences here
+  } else {
+    // Handle the error here
+  }
+}

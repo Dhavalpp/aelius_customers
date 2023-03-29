@@ -17,12 +17,13 @@ class Category {
 
   int status;
   String message;
-  List<Datum> data;
+  List<CategoryDatum> data;
 
   factory Category.fromJson(Map<String, dynamic> json) => Category(
         status: json["status"],
         message: json["message"],
-        data: List<Datum>.from(json["Data"].map((x) => Datum.fromJson(x))),
+        data: List<CategoryDatum>.from(
+            json["Data"].map((x) => CategoryDatum.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -32,8 +33,8 @@ class Category {
       };
 }
 
-class Datum {
-  Datum({
+class CategoryDatum {
+  CategoryDatum({
     required this.id,
     required this.name,
     required this.file,
@@ -53,7 +54,7 @@ class Datum {
   int? createdBy;
   int? updatedBy;
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory CategoryDatum.fromJson(Map<String, dynamic> json) => CategoryDatum(
         id: json["id"],
         name: json["name"],
         file: json["file"],

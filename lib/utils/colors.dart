@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 const primaryColor = Colors.black;
-const blackColor = Colors.black;
+const Color blackColor = Colors.black;
 const viewAllColor = Colors.orange;
 const orangeColor = Colors.orange;
 const blueColor = Colors.blue;
 const secondaryColor = Colors.grey;
 const greyColor = Colors.grey;
-const whiteColor = Colors.white;
+const Color whiteColor = Colors.white;
 const greenColor = Colors.green;
 const redColor = Colors.red;
 const yellowColor = Colors.yellow;
@@ -28,7 +28,6 @@ Color boxShadow = Colors.black38;
 
 const bottomSelectedColor = Colors.black;
 Color bottomUnselectedColor = Colors.grey.shade400;
-
 Color likedIconBackColor = Colors.grey.shade300;
 Color starIconColor = Colors.yellow.shade600;
 
