@@ -83,8 +83,8 @@ class _HomeState extends State<Home> {
                             fit: BoxFit.cover,
                             height: double.infinity,
                             width: double.infinity,
-                            placeholder: (context, url) =>
-                                const CircularProgressIndicator(),
+                            placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator()),
                             errorWidget: (context, url, error) => Center(
                               child: Image.asset(banner1),
                             ),

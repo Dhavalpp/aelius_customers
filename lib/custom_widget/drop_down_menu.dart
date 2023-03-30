@@ -3,12 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/category.dart';
+import '../models/region_model.dart';
 
 class DropDownMenu extends StatefulWidget {
   final bool gender;
+  final Function(String?)? onOptionSelected; // add this
+
   bool isregion;
 
-  DropDownMenu({super.key, required this.isregion, required this.gender});
+  DropDownMenu(
+      {super.key,
+      required this.isregion,
+      required this.gender,
+      this.onOptionSelected});
 
   @override
   State<DropDownMenu> createState() => _DropDownMenuState();
@@ -16,17 +23,17 @@ class DropDownMenu extends StatefulWidget {
 
 class _DropDownMenuState extends State<DropDownMenu> {
   String _selectedregionItem = 'Rajkot';
-  final List<String> _dropDownregionItems = [
-    'Rajkot',
-    'Ahmedabad',
-    'Surat',
-    'Baroda',
-    'Jamnagar',
-    'Junagadh',
-    'Morbi'
+  List<RegionDatum> dropDownregionItems = [
+    // 'Rajkot',
+    // 'Ahmedabad',
+    // 'Surat',
+    // 'Baroda',
+    // 'Jamnagar',
+    // 'Junagadh',
+    // 'Morbi'
   ];
 
-  List<CategoryDatum> category_list = [];
+  List<CategoryDatum> categorylist = [];
   String _selectedCategory = "plumber";
 
   String _selectedItem = 'Male';
@@ -36,7 +43,15 @@ class _DropDownMenuState extends State<DropDownMenu> {
     final response = await http.get(Uri.parse(categoryUrl));
     final data = categoryFromJson(response.body);
     setState(() {
-      category_list = data.data;
+      categorylist = data.data;
+    });
+  }
+
+  Future<void> fetchRegion() async {
+    final response = await http.get(Uri.parse(regionUrl));
+    final data = regionModelFromJson(response.body);
+    setState(() {
+      dropDownregionItems = data.data;
     });
   }
 
@@ -59,10 +74,10 @@ class _DropDownMenuState extends State<DropDownMenu> {
                 setState(() {
                   _selectedCategory = newValue.toString();
                 });
-                _handleOptionSelection(_selectedCategory);
+                widget.onOptionSelected!(newValue);
               },
-              items: category_list.isNotEmpty
-                  ? category_list.map((category) {
+              items: categorylist.isNotEmpty
+                  ? categorylist.map((category) {
                       return DropdownMenuItem(
                         value: category.name,
                         child: Text(category.name),
@@ -78,17 +93,18 @@ class _DropDownMenuState extends State<DropDownMenu> {
           : widget.gender == false && widget.isregion == true
               ? DropdownButton(
                   // hint: const Text('Select a category'),
-                  value: _selectedCategory,
+                  value: _selectedregionItem,
                   onChanged: (newValue) {
                     setState(() {
-                      _selectedCategory = newValue.toString();
+                      _selectedregionItem = newValue.toString();
                     });
+                    widget.onOptionSelected!(newValue);
                   },
-                  items: category_list.isNotEmpty
-                      ? category_list.map((category) {
+                  items: dropDownregionItems.isNotEmpty
+                      ? dropDownregionItems.map((category) {
                           return DropdownMenuItem(
-                            value: category.name,
-                            child: Text(category.name),
+                            value: category.regionTitle,
+                            child: Text(category.regionTitle),
                           );
                         }).toList()
                       : _dropDownItems
@@ -111,12 +127,9 @@ class _DropDownMenuState extends State<DropDownMenu> {
                     setState(() {
                       _selectedItem = value.toString();
                     });
+                    widget.onOptionSelected!(value);
                   },
                 ),
     );
-  }
-
-  void _handleOptionSelection(String? selectedOption) {
-    print('Selected option: $selectedOption');
   }
 }

@@ -33,6 +33,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _companyController = TextEditingController();
+  final String gender = '';
+  final String category = '';
+  final String region = '';
 
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _confirmPassController = TextEditingController();
@@ -177,6 +180,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   refrealController: _refralCode.text,
                   emailController: _emailController.text,
                   addressController: _addressContainer.text,
+                  gender: gender,
+                  region: region,
+                  date:"${_selectedDate.day}-${_selectedDate.month}-${_selectedDate.year}",
                 )),
       );
     }
@@ -390,7 +396,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             color: Colors.black,
                           ),
                         ),
-                        DropDownMenu(gender: true, isregion: false),
+                        DropDownMenu(
+                          gender: true,
+                          isregion: false,
+                          onOptionSelected: genderSelected,
+                        ),
                       ],
                     )),
                     const Space(16),
@@ -419,7 +429,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               color: Colors.black,
                             ),
                           ),
-                          DropDownMenu(gender: false, isregion: true),
+                          DropDownMenu(
+                            gender: false,
+                            isregion: true,
+                            onOptionSelected: regionSelected,
+                          ),
                         ],
                       ),
                     ),
@@ -511,6 +525,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+
+  void genderSelected(String? selectedOption) {
+    selectedOption = gender;
+  }
+
+  void regionSelected(String? selectedOption) {
+    selectedOption = region;
+  }
+
+  // void categorySelected(String? selectedOption) {
+  //   selectedOption = category;
+  // }
 
   Future<void> _selectDate() async {
     final pickedDate = await showDatePicker(

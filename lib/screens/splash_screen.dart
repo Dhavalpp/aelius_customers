@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:aelius_customer/screens/dashboard_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -39,10 +40,10 @@ class _SplashScreenState extends State<SplashScreen> {
   void init() async {
     Timer(
       const Duration(seconds: 2),
-          () {
+      () {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const BannerScreen()),
+          MaterialPageRoute(builder: (context) => const DashBoardScreen()),
           (route) => false,
         );
       },

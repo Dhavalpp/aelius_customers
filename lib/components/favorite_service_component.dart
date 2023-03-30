@@ -11,6 +11,7 @@ import '../utils/images.dart';
 class FavoriteServiceComponent extends StatefulWidget {
   final ServiceProviderModel? serviceProviderModel;
 
+
   final int index;
 
   const FavoriteServiceComponent(this.index, {super.key, this.serviceProviderModel});

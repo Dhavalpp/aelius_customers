@@ -8,7 +8,6 @@ import 'package:nb_utils/nb_utils.dart';
 import '../components/text_field_widget.dart';
 import '../custom_widget/drop_down_menu.dart';
 import '../custom_widget/space.dart';
-import '../models/customer_details_model.dart';
 import '../models/user_model.dart';
 import '../utils/colors.dart';
 import '../utils/images.dart';
@@ -34,7 +33,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   String customerPincode = "";
   String customerAbout = "";
 
-  DateTime _selectedDate = DateTime.now();
+  late DateTime _selectedDate;
 
   File? imageFile;
   XFile? pickedFile;
@@ -42,16 +41,15 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     sharePreferenceData();
+    _selectedDate = userModels!.detail[0].dateOfBirth;
   }
 
   Future<dynamic> sharePreferenceData() async {
     UserModel? userData = await SharedPref().getSharedPreferences();
     setState(() {
       userModels = userData;
-      print(userModels!.detail[0].fullName);
     });
   }
 
@@ -94,16 +92,21 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 if (customerAbout != "") {
                   updateData(userModels);
                 }
-                updateUser(
-                  userModels!.detail[0].id.toString(),
-                  customerName,
-                  customerMobile,
-                  customerEmail,
-                  dateofBirth,
-                  customerGender,
-                  customerAddress,
-                  customerResidancialArea,
-                );
+                // updateUser(
+                //   userModels!.detail[0].id.toString(),
+                //   customerName,
+                //   customerMobile,
+                //   customerEmail,
+                //   dateofBirth =
+                //       "${_selectedDate.day}-${_selectedDate.month}-${_selectedDate.year}",
+                //   customerGender,
+                //   customerAddress,
+                //   customerResidancialArea,
+                // );
+                // if (imageFile != null) {
+                //   updateUserProfile(imageFile!);
+                // }
+
                 setState(() {
                   Navigator.pushAndRemoveUntil(
                     context,
@@ -232,7 +235,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     color: Colors.black,
                   ),
                 ),
-                DropDownMenu(gender: true, isregion: false),
+                DropDownMenu(
+                  gender: true,
+                  isregion: false,
+                  // onOptionSelected: regionSelected,
+                ),
               ],
             ),
           ),
@@ -258,7 +265,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     color: Colors.black,
                   ),
                 ),
-                DropDownMenu(gender: false, isregion: true),
+                DropDownMenu(
+                  gender: false,
+                  isregion: true,
+                  // onOptionSelected: regionSelected,
+                ),
               ],
             ),
           ),
@@ -299,6 +310,14 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     );
   }
 
+  // void genderSelected(String? selectedOption) {
+  //   selectedOption = customerGender;
+  // }
+
+  // void regionSelected(String? selectedOption) {
+  //   selectedOption = customerResidancialArea;
+  // }
+
   Container backContainer(
     Row rowcontainer,
   ) {
@@ -317,7 +336,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     final pickedDate = await showDatePicker(
         context: context,
         initialDate: _selectedDate,
-        firstDate: DateTime.now(),
+        firstDate: DateTime(1930),
         lastDate: DateTime(2100));
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {

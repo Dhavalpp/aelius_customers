@@ -28,7 +28,7 @@ class DashBoardScreen extends StatefulWidget {
 class _DashBoardScreenState extends State<DashBoardScreen> {
   DateTime? _currentBackPressTime;
 
-  late UserModel? userModels;
+  UserModel? userModels;
 
   @override
   void initState() {
@@ -36,6 +36,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     super.initState();
     _selectedItem;
     sharePreferenceData();
+    userModels;
   }
 
   final _pageItem = [
@@ -119,7 +120,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             title: Text(_titleItem[_selectedItem],
                 textAlign: TextAlign.center,
                 style:
-                const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
+                    const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
             elevation: 0,
             backgroundColor: transparent,
             iconTheme: const IconThemeData(size: 30),
@@ -226,7 +227,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                            const FavouriteProvidersScreen()));
+                                const FavouriteProvidersScreen()));
                   },
                 ),
                 drawerWidget(

@@ -15,6 +15,7 @@ import '../models/user_model.dart';
 
 String baseUrl = 'http://imusiccompany.com/api/';
 String categoryUrl = '${baseUrl}categories';
+String regionUrl = '${baseUrl}regionlist';
 String servicesListUrl = '${baseUrl}spacific_member';
 String bannerUrl = '${baseUrl}banner';
 String registerUrl = '${baseUrl}member/insert';
@@ -127,6 +128,19 @@ Future registerUser(
     print(response);
   } else {
     throw Exception('Failed to register user.');
+  }
+}
+
+Future updateUserProfile(File Imageurl) async {
+  final url = Uri.parse(updateProfilesUrl);
+  final request = http.MultipartRequest('POST', url);
+  var profileImg = await http.MultipartFile.fromPath('imageurl', Imageurl.path);
+  request.files.add(profileImg);
+  var response = await request.send();
+  if (response.statusCode == 200) {
+    print(response);
+  } else {
+    throw Exception('Failed to Update User Images.');
   }
 }
 

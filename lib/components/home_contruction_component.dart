@@ -75,7 +75,6 @@ class HomeConstructionComponentState extends State<HomeConstructionComponent> {
                                         servicesss: false,
                                       )),
                             );
-                            print(category_list[index].id);
                           },
                           child: Card(
                             elevation: 8,
@@ -87,8 +86,8 @@ class HomeConstructionComponentState extends State<HomeConstructionComponent> {
                                   fit: BoxFit.cover,
                                   height: 70,
                                   width: 70,
-                                  placeholder: (context, url) =>
-                                      const CircularProgressIndicator(),
+                                  placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator()),
                                   errorWidget: (context, url, error) => Center(
                                     child:
                                         Image.asset(banner1, fit: BoxFit.cover),
