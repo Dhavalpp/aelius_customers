@@ -31,6 +31,17 @@ class Category {
         "message": message,
         "Data": List<dynamic>.from(data.map((x) => x.toJson())),
       };
+
+  CategoryDatum? getCategoryByName(String name) {
+    return data.firstWhere(
+      (category) => category.name == name,
+    );
+  }
+
+  int? getIdByName(String name) {
+    final category = getCategoryByName(name);
+    return category?.id;
+  }
 }
 
 class CategoryDatum {

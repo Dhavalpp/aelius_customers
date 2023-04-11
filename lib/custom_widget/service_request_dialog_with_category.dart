@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../main.dart';
+import '../models/user_model.dart';
+import '../utils/api_list.dart';
+import '../utils/shared_pref.dart';
 import 'drop_down_menu.dart';
 
 class ServicesRequestDialogWithCategory extends StatefulWidget {
   bool nearestser;
+
   ServicesRequestDialogWithCategory({
     required this.nearestser,
     super.key,
@@ -32,11 +36,17 @@ class _ServicesRequestDialogWithCategoryState
   DateTime _selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
 
+  UserModel? userModels;
+
+  TextEditingController nameController = TextEditingController();
+  TextEditingController categoryController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _isAccepted;
+    sharePreferenceData();
   }
 
   Future<void> _selectedTime(BuildContext context) async {
@@ -88,9 +98,23 @@ class _ServicesRequestDialogWithCategoryState
     );
   }
 
+  Future<dynamic> sharePreferenceData() async {
+    UserModel? userData = await SharedPref().getSharedPreferences();
+    setState(() {
+      userModels = userData;
+      print(userModels!.detail[0].fullName);
+    });
+  }
+
   // This method is called when the member clicks on the ACCEPT button.
   void _acceptRequest() {
     setState(() {
+      scheduleBooking(
+          userModels!.detail[0].id.toString(),
+          "11",
+          "${_selectedDate.day} / ${_selectedDate.month} / ${_selectedDate.year}",
+          "${selectedTime.hour} : ${selectedTime.minute}",
+          descriptionController.text);
       _isAccepted = true;
       _otp = _generateOTP();
     });
@@ -176,9 +200,10 @@ class _ServicesRequestDialogWithCategoryState
                             ],
                           ),
                           const SizedBox(height: 20),
-                          const TextField(
+                          TextField(
                             maxLines: 5,
                             minLines: 1,
+                            controller: descriptionController,
                             decoration:
                                 InputDecoration(hintText: "Description"),
                           ),

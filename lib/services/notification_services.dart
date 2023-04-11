@@ -1,12 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-
+import 'package:http/http.dart' as http;
 import 'package:app_settings/app_settings.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../custom_widget/notifiacation_member_profile.dart';
 import '../screens/notification_screen.dart';
 
 class NotificationServices {
@@ -15,7 +17,7 @@ class NotificationServices {
 
   //initialising firebase message plugin
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin();
 
   // function to request notifications permissions
   void requestNotificationPermission() async {
@@ -40,10 +42,9 @@ class NotificationServices {
   }
 
   //function to initialise flutter local notification plugin to show notifications for android when app is active
-  void initLocalNotifications(
-      BuildContext context, RemoteMessage message) async {
+  void initLocalNotifications(BuildContext context, RemoteMessage message) async {
     var androidInitializationSettings =
-        const AndroidInitializationSettings('@mipmap/ic_launcher');
+    const AndroidInitializationSettings('@mipmap/ic_launcher');
     var iosInitializationSettings = const DarwinInitializationSettings();
 
     var initializationSetting = InitializationSettings(
@@ -51,8 +52,7 @@ class NotificationServices {
 
     await _flutterLocalNotificationsPlugin.initialize(initializationSetting,
         onDidReceiveNotificationResponse: (payload) {
-      // handle interaction when app is active for android
-      handleMessage(context, message);
+          handleMessage(context, message);
     });
   }
 
@@ -68,7 +68,6 @@ class NotificationServices {
 
       //show notifications when app is active
       if (Platform.isAndroid) {
-        //calling this function to handle internation
         initLocalNotifications(context, message);
         showNotification(message);
       } else {
@@ -85,16 +84,16 @@ class NotificationServices {
         importance: Importance.max);
 
     AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails(
-            channel.id.toString(), channel.name.toString(),
-            channelDescription: 'your channel description',
-            importance: Importance.max,
-            priority: Priority.max,
-            ticker: 'ticker');
+    AndroidNotificationDetails(
+        channel.id.toString(), channel.name.toString(),
+        channelDescription: 'your channel description',
+        importance: Importance.max,
+        priority: Priority.max,
+        ticker: 'ticker');
 
     const DarwinNotificationDetails darwinNotificationDetails =
-        DarwinNotificationDetails(
-            presentAlert: true, presentBadge: true, presentSound: true);
+    DarwinNotificationDetails(
+        presentAlert: true, presentBadge: true, presentSound: true);
 
     NotificationDetails notificationDetails = NotificationDetails(
         android: androidNotificationDetails, iOS: darwinNotificationDetails);
@@ -127,7 +126,7 @@ class NotificationServices {
   Future<void> setupInteractMessage(BuildContext context) async {
     // when app is terminated
     RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
+    await FirebaseMessaging.instance.getInitialMessage();
 
     if (initialMessage != null) {
       handleMessage(context, initialMessage);
@@ -140,9 +139,16 @@ class NotificationServices {
   }
 
   void handleMessage(BuildContext context, RemoteMessage message) {
-    if (message.data['type'] == 'msj') {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => NotificationScreen()));
+    if (message.data['type'] == 'accept') {
+      showDialog(
+        context: context,
+        builder: (context) => NotificationMemberProfile(completed: 1),
+      );
+    } else if (message.data['type'] == 'feedback') {
+      showDialog(
+        context: context,
+        builder: (context) => NotificationMemberProfile(completed: 2),
+      );
     }
   }
 }

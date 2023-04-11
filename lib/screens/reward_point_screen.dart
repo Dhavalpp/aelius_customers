@@ -18,7 +18,7 @@ class RewardPointScreen extends StatefulWidget {
 
 class _RewardPointScreenState extends State<RewardPointScreen> {
   double screenHeight = 0.0;
-  late UserModel? userModels;
+  UserModel? userModels;
 
   @override
   void initState() {

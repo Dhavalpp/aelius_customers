@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:aelius_customer/models/media_post_list.dart';
 import 'package:aelius_customer/models/services_list_model.dart';
 import 'package:aelius_customer/utils/shared_pref.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/banner_list_model.dart';
@@ -12,8 +14,14 @@ import '../models/banner_model.dart';
 import '../models/category.dart';
 import '../models/rewarded_model.dart';
 import '../models/user_model.dart';
+import '../screens/dashboard_screen.dart';
+import '../screens/sign_in_screen.dart';
 
 String baseUrl = 'http://imusiccompany.com/api/';
+String imagebannerURl = "http://imusiccompany.com/public/images/banner/";
+String imageUrl = "http://imusiccopany.com/public/images/";
+String imagecategoryURl = "http://imusiccompany.com/public/images/categories/";
+
 String categoryUrl = '${baseUrl}categories';
 String regionUrl = '${baseUrl}regionlist';
 String servicesListUrl = '${baseUrl}spacific_member';
@@ -30,16 +38,51 @@ String favoriteURL = '${baseUrl}member/favourite';
 String commentUrl = '${baseUrl}media/comment';
 String mediaListUrl = '${baseUrl}media/medialist';
 String rewardedUrl = '${baseUrl}customer/rewardhistory';
+String googleUrl = 'https://fcm.googleapis.com/fcm/send';
 
 Future<Category> fetchCategories() async {
   final response = await http.get(Uri.parse(categoryUrl));
   var data = jsonDecode(response.body);
   if (response.statusCode == 200) {
     var jsons = Category.fromJson(data);
+    print(jsons.data);
+    SharedPref().setCategory(Category.fromJson(data));
     return Category.fromJson(jsonDecode(response.body));
     // return Category(status: json.status, message:json.message, data:json.data);
   } else {
     throw Exception('Failed to load categories');
+  }
+}
+
+Future notificationGenrate(String token) async {
+  // var devicetoken = FirebaseMessaging.instance.getToken();
+  var notificationData = {
+    'to':
+    'fwWYOYMXSCO7Vf81Z99bCI:APA91bFKHXf9rcRW67DWVX2OgT6A4vH7ohVMz4Ax2taayPyu_CNgz0q-6vDdkhGooghmoyyqoL34aysJXNFj-84XXB6b3qG8T7hO-qk5MXu7NqkXa3dAJuMEWZa1COF6zHsq_wXACgJq',
+    'priority': 'high',
+    'notification': {
+      'title': 'Complete Services',
+      'body':
+      'Your services is Completed Please Provide Review for Better Suggestions'
+    },
+    'data': {
+      'type': 'feedback',
+    }
+  };
+  final responses = await http.post(Uri.parse(googleUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization':
+        'key=AAAAdlQvuM0:APA91bHUQYgCcgr28A-YDsWPvcrf9Anp2cRD5Z_-6g5ziy3rl-Cdr0sntTtM2dWTQizY_BJq9qFwcDweNoW0nbNnZNCJt_0i5MYe1pdIRAAuGtziIYcuLboEcNCIS2z_TN-SItzzjBSq'
+      },
+      body: jsonEncode(notificationData));
+  var data = jsonDecode(responses.body);
+  if (responses.statusCode == 200) {
+    print(data);
+    final jsonData = jsonDecode(responses.body);
+    print(jsonData);
+  } else {
+    throw Exception('Failed to login user');
   }
 }
 
@@ -51,28 +94,36 @@ Future<BannerModel> forntPageBanner() async {
       body: jsonEncode(<String, String>{'banner_for': 'customer'}));
   var data = jsonDecode(responses.body);
   if (responses.statusCode == 200) {
-    var bannerModels = BannerModel.fromJson(data);
     return BannerModel.fromJson(jsonDecode(responses.body));
   } else {
     throw Exception('Failed to load Banner');
   }
 }
 
-Future login(String mobileno) async {
+Future login(BuildContext context,
+    String mobileno,) async {
+  String? fcm = await SharedPref().getFCMToken();
   final responses = await http.post(Uri.parse(loginUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
-      body: jsonEncode(<String, String>{'mobile_number': mobileno}));
+      body: jsonEncode(
+          <String, String>{'mobile_number': mobileno, 'fcm_token': fcm!}));
   var data = jsonDecode(responses.body);
 
   if (responses.statusCode == 200) {
     print(responses.body);
-    print(data);
+    print(mobileno);
+    print("login:$data");
+    print("success");
     String jsonString = jsonEncode(responses.body);
-
+    print(jsonString);
     SharedPref().setSharedPreferences(UserModel.fromJson(data));
     UserModel.fromJson(data);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => DashBoardScreen()),
+    );
     // return "success";
   } else {
     throw Exception('Failed to login user');
@@ -87,26 +138,21 @@ Future<BannerListModel> fetchBannerList() async {
       body: jsonEncode(<String, String>{'banner_for': 'customer'}));
   var data = jsonDecode(responses.body);
   if (responses.statusCode == 200) {
-    var bannerModels = BannerListModel.fromJson(data);
-    print(bannerModels.data[0].image);
-    print(responses.body);
     return BannerListModel.fromJson(jsonDecode(responses.body));
   } else {
     throw Exception('Failed to load Banner');
   }
 }
 
-Future registerUser(
-  File image,
-  String phonenumber,
-  String companyName,
-  String businesscategory,
-  String region,
-  String username,
-  String email,
-  String pincode,
-  String refrecode,
-) async {
+Future registerUser(File image,
+    String phonenumber,
+    String companyName,
+    String businesscategory,
+    String region,
+    String username,
+    String email,
+    String pincode,
+    String refrecode, BuildContext context,) async {
   final url = Uri.parse(registerUrl);
   //
   final request = http.MultipartRequest('POST', url);
@@ -125,6 +171,11 @@ Future registerUser(
   var response = await request.send();
 
   if (response.statusCode == 200) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => SignInScreen()),
+    );
+
     print(response);
   } else {
     throw Exception('Failed to register user.');
@@ -314,9 +365,9 @@ Future findnear(
         'Content-Type': 'application/json; charset=UTF-8'
       },
       body: jsonEncode(<String, String>{
-        'category_id': category_id,
-        "pincode": pincode,
-        'region': region,
+        'category_id': "11",
+        "pincode": '360003',
+        // 'region': ,
       }));
   var data = jsonDecode(responses.body);
   if (responses.statusCode == 200) {
@@ -342,25 +393,6 @@ Future<RewardedModel> rewardHistory(String referral_code) async {
     var rewardedmodels = RewardedModel.fromJson(data);
     print(rewardedmodels);
     return RewardedModel.fromJson(jsonDecode(responses.body));
-  } else {
-    throw Exception('Failed to load Banner');
-  }
-}
-
-Future<ServicesDatum> servicesList(String categoryId) async {
-  final responses =
-      await http.post(Uri.parse("http://imusiccompany.com/api/spacific_member"),
-          body: jsonEncode(<String, String>{
-            'category_id': "11",
-          }));
-  var data = jsonDecode(responses.body);
-  if (responses.statusCode == 200) {
-    print(responses.body);
-    print(responses.body.length);
-
-    var servicessss = ServicesDatum.fromJson(data);
-    print(servicessss);
-    return ServicesDatum.fromJson(jsonDecode(responses.body));
   } else {
     throw Exception('Failed to load Banner');
   }

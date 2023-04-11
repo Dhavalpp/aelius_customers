@@ -33,17 +33,29 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   String customerPincode = "";
   String customerAbout = "";
 
-  late DateTime _selectedDate;
+  DateTime _selectedDate = DateTime.now();
 
   File? imageFile;
   XFile? pickedFile;
   UserModel? userModels;
 
+  Future<void> _selectDate() async {
+    final pickedDate = await showDatePicker(
+        context: context,
+        initialDate: _selectedDate,
+        firstDate: DateTime(1980),
+        lastDate: DateTime(2100));
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     sharePreferenceData();
-    _selectedDate = userModels!.detail[0].dateOfBirth;
   }
 
   Future<dynamic> sharePreferenceData() async {
@@ -75,205 +87,185 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         enableDrag: false,
         builder: (context) {
           return Padding(
-            padding: const EdgeInsets.all(10),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                fixedSize: Size(MediaQuery.of(context).size.width, 45),
-                shape: const StadiumBorder(),
-              ),
-              child: const Text("Save", style: TextStyle(fontSize: 16)),
-              onPressed: () {
-                if (customerName != "") {
-                  updateData(userModels);
-                }
-                if (customerEmail != "") {
-                  updateData(userModels);
-                }
-                if (customerAbout != "") {
-                  updateData(userModels);
-                }
-                // updateUser(
-                //   userModels!.detail[0].id.toString(),
-                //   customerName,
-                //   customerMobile,
-                //   customerEmail,
-                //   dateofBirth =
-                //       "${_selectedDate.day}-${_selectedDate.month}-${_selectedDate.year}",
-                //   customerGender,
-                //   customerAddress,
-                //   customerResidancialArea,
-                // );
-                // if (imageFile != null) {
-                //   updateUserProfile(imageFile!);
-                // }
+              padding: const EdgeInsets.all(10),
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: Size(MediaQuery.of(context).size.width, 45),
+                    shape: const StadiumBorder(),
+                  ),
+                  child: const Text("Save", style: TextStyle(fontSize: 16)),
+                  onPressed: () {
+                    updateData(userModels);
 
-                setState(() {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const DashBoardScreen()),
-                    (route) => false,
-                  );
-                });
-              },
-            ),
-          );
+                    if (customerEmail != "") {
+                      updateData(userModels);
+                    }
+
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const DashBoardScreen()),
+                      (route) => false,
+                    );
+                  }));
         },
         onClosing: () {},
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        children: [
-          Center(
-            child: Stack(
-              children: [
-                Container(
-                  decoration: boxDecorationDefault(
-                    border: Border.all(
-                        color: context.scaffoldBackgroundColor, width: 4),
-                    shape: BoxShape.circle,
-                  ),
-                  child: SizedBox(
-                    height: 120,
-                    width: 120,
-                    child: imageFile != null
-                        ? Image.file(
-                            imageFile!,
-                            width: 150,
-                            height: 150,
-                            fit: BoxFit.cover,
-                          ).cornerRadiusWithClipRRect(100)
-                        : const CircleAvatar(
-                            backgroundImage: AssetImage(userImage),
-                          ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 3,
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: boxDecorationWithRoundedCorners(
-                      boxShape: BoxShape.circle,
-                      backgroundColor: primaryColor,
-                      border: Border.all(color: Colors.white),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              Center(
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: boxDecorationDefault(
+                        border: Border.all(
+                            color: context.scaffoldBackgroundColor, width: 4),
+                        shape: BoxShape.circle,
+                      ),
+                      child: SizedBox(
+                        height: 120,
+                        width: 120,
+                        child: imageFile != null
+                            ? Image.file(
+                                imageFile!,
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.cover,
+                              ).cornerRadiusWithClipRRect(100)
+                            : const CircleAvatar(
+                                backgroundImage: AssetImage(userImage),
+                              ),
+                      ),
                     ),
-                    child:
-                        const Icon(Icons.camera, color: Colors.white, size: 20),
-                  ).onTap(() async {
-                    _showBottomSheet(context);
-                  }),
-                )
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          TextFieldWidget(
-            label: "Full Name",
-            text: userModels!.detail[0].fullName,
-            onChanged: (name) {
-              customerName = name;
-            },
-          ),
-          const SizedBox(height: 15),
-          TextFieldWidget(
-            label: "Email",
-            text: userModels!.detail[0].emailId,
-            onChanged: (email) {
-              customerEmail = email;
-            },
-          ),
-          const SizedBox(height: 15),
-          TextFieldWidget(
-            label: "Phone No.",
-            text: userModels!.detail[0].whatsappNumber.toString(),
-            onChanged: (phone) {
-              customerMobile = phone;
-            },
-          ),
-          const SizedBox(height: 15),
-          backContainer(
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Date of Birth",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
+                    Positioned(
+                      bottom: 3,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: boxDecorationWithRoundedCorners(
+                          boxShape: BoxShape.circle,
+                          backgroundColor: primaryColor,
+                          border: Border.all(color: Colors.white),
+                        ),
+                        child: const Icon(Icons.camera,
+                            color: Colors.white, size: 20),
+                      ).onTap(() async {
+                        _showBottomSheet(context);
+                      }),
+                    )
+                  ],
                 ),
-                TextButton(
-                  onPressed: _selectDate,
-                  child: Container(
-                      padding: const EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          color: Colors.grey.shade400,
-                          borderRadius: BorderRadius.circular(5.0)),
-                      child: Text(_selectedDate == DateTime.now()
-                          ? "${userModels!.detail[0].dateOfBirth.day}-${userModels!.detail[0].dateOfBirth.month}-${userModels!.detail[0].dateOfBirth.year}"
-                          : "${_selectedDate.day}-${_selectedDate.month}-${_selectedDate.year}")),
+              ),
+              const SizedBox(height: 20),
+              TextFieldWidget(
+                label: "Full Name",
+                text: userModels!.detail[0].fullName,
+                onChanged: (name) {
+                  customerName = name;
+                },
+              ),
+              const SizedBox(height: 15),
+              TextFieldWidget(
+                label: "Email",
+                text: userModels!.detail[0].emailId,
+                onChanged: (email) {
+                  customerEmail = email;
+                },
+              ),
+              const SizedBox(height: 15),
+              TextFieldWidget(
+                label: "Phone No.",
+                text: userModels!.detail[0].whatsappNumber.toString(),
+                onChanged: (phone) {
+                  customerMobile = phone;
+                },
+              ),
+              const SizedBox(height: 15),
+              backContainer(
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Date of Birth",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16),
+                    ),
+                    TextButton(
+                      onPressed: _selectDate,
+                      child: Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade400,
+                              borderRadius: BorderRadius.circular(5.0)),
+                          child: Text(_selectedDate == DateTime.now()
+                              ? "${userModels!.detail[0].dateOfBirth.day}-${userModels!.detail[0].dateOfBirth.month}-${userModels!.detail[0].dateOfBirth.year}"
+                              : "${_selectedDate.day}-${_selectedDate.month}-${_selectedDate.year}")),
+                    ),
+                    //     ElevatedButton(
+                    //
+                  ],
                 ),
-                //     ElevatedButton(
-                //
-              ],
-            ),
+              ),
+              const Space(15),
+              backContainer(
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Area of Residence",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    DropDownMenu(
+                      gender: true,
+                      isregion: false,
+                      // onOptionSelected: regionSelected,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 15),
+              TextFieldWidget(
+                label: "Address",
+                text: userModels!.detail[0].areaOfResidenceAdress,
+                maxLines: 5,
+                onChanged: (about) {
+                  customerAddress = about;
+                },
+              ),
+              const Space(15),
+              backContainer(
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Area of Residence",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    DropDownMenu(
+                      gender: false,
+                      isregion: true,
+                      // onOptionSelected: regionSelected,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const Space(15),
-          backContainer(
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Area of Residence",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                DropDownMenu(
-                  gender: true,
-                  isregion: false,
-                  // onOptionSelected: regionSelected,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 15),
-          TextFieldWidget(
-            label: "Address",
-            text: userModels!.detail[0].areaOfResidenceAdress,
-            maxLines: 5,
-            onChanged: (about) {
-              customerAddress = about;
-            },
-          ),
-          const Space(15),
-          backContainer(
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Area of Residence",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                DropDownMenu(
-                  gender: false,
-                  isregion: true,
-                  // onOptionSelected: regionSelected,
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -310,9 +302,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     );
   }
 
-  // void genderSelected(String? selectedOption) {
-  //   selectedOption = customerGender;
-  // }
+  void genderSelected(String? selectedOption) {
+    selectedOption = customerGender;
+  }
 
   // void regionSelected(String? selectedOption) {
   //   selectedOption = customerResidancialArea;
@@ -322,6 +314,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     Row rowcontainer,
   ) {
     return Container(
+      height: 60,
       width: double.infinity,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30), color: Colors.grey.shade200),
@@ -330,19 +323,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         child: rowcontainer,
       ),
     );
-  }
-
-  Future<void> _selectDate() async {
-    final pickedDate = await showDatePicker(
-        context: context,
-        initialDate: _selectedDate,
-        firstDate: DateTime(1930),
-        lastDate: DateTime(2100));
-    if (pickedDate != null && pickedDate != _selectedDate) {
-      setState(() {
-        _selectedDate = pickedDate;
-      });
-    }
   }
 
   void _getFromGallery() async {

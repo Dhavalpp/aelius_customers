@@ -27,6 +27,7 @@ class OTPVerificationScreen extends StatefulWidget {
       region,
       gender,
       date,
+      token,
       refrealController;
 
   File? imagess;
@@ -36,6 +37,7 @@ class OTPVerificationScreen extends StatefulWidget {
       required this.verificationIds,
       required this.isLogin,
       this.imagess,
+      this.token,
       required this.smsController,
       this.region,
       this.nameController,
@@ -72,12 +74,18 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     // _startListeningSms();
   }
 
-
   BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
         border: Border.all(color: Theme.of(context).primaryColor),
         borderRadius: BorderRadius.circular(10.0),
         color: Colors.black12);
+  }
+
+  _onSubmitOtp() {
+    setState(() {
+      _isLoadingButton = !_isLoadingButton;
+    });
+    _verifyOtpCode();
   }
 
   _startListeningSms() {
@@ -88,6 +96,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         _onOtpCallBack(_otpCode!, true);
       });
     });
+  }
+
+  _onClickRetry() {
+    _startListeningSms();
   }
 
   _onOtpCallBack(String otpCode, bool isAutofill) {
@@ -119,49 +131,35 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   Future<void> _signInWithPhoneNumber() async {
     try {
-      final AuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: widget.verificationIds!,
-        smsCode: widget.smsController.text,
-      );
-      final User? user = (await _auth.signInWithCredential(credential)).user;
-
-      if (user != null) {
+      // final AuthCredential credential = PhoneAuthProvider.credential(
+      //   verificationId: widget.verificationIds!,
+      //   smsCode: widget.smsController.text,
+      // );
+      if (widget.mobileController.isNotEmpty) {
         if (widget.isLogin == true) {
-          if (widget.mobileController != null) {
-            login(widget.mobileController);
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => DashBoardScreen()),
-            );
-            await SharedPref.setLoggedIn(true);
-          } else {
-            showDialog(
-              context: context,
-              builder: (context) =>
-                  Dialog(child: Text(widget.mobileController.toString())),
-            );
-          }
+          print("login");
+          await SharedPref.setLoggedIn(true);
+          login(context, widget.mobileController);
         } else {
+          print("Signup");
           registerUser(
-            widget.imagess!,
-            widget.nameController!,
-            widget.mobileController.toString(),
-            widget.emailController!,
-            widget.date!,
-            widget.gender!,
-            widget.addressController!,
-            widget.region!,
-            widget.refrealController!,
-          );
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => SignInScreen()),
-          );
+              widget.imagess!,
+              widget.nameController!,
+              widget.mobileController.toString(),
+              widget.emailController!,
+              widget.date!,
+              widget.gender!,
+              widget.addressController!,
+              widget.region!,
+              widget.refrealController!,
+              context);
         }
       } else {
-        if (kDebugMode) {
-          print('Error: Could not sign in.');
-        }
+        showDialog(
+          context: context,
+          builder: (context) =>
+              Dialog(child: Text(widget.mobileController.toString())),
+        );
       }
     } catch (e) {
       if (kDebugMode) {
@@ -238,7 +236,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       const Space(4),
                       GestureDetector(
                         onTap: () {
-                          //
+                          _onClickRetry();
                         },
                         child: const Text(
                           "Resend OTP",
@@ -266,8 +264,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         //         builder: (context) => const DashBoardScreen()),
                         //   );
                         // },
-                        // _onSubmitOtp,
-                        _signInWithPhoneNumber();
+                        _onSubmitOtp();
+                        // _startListeningSms();
                       },
                       child: const Text(
                         "Submit",

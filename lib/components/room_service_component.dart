@@ -43,7 +43,9 @@ class _RoomServiceComponentState extends State<RoomServiceComponent> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ServiceProvidersScreen(index: index,servicesss: true)),
+                  builder: (context) => ServiceProvidersScreen(
+                      categoryName: serviceProviders[index].serviceName,
+                      servicesss: true)),
             );
             for (var i = 0; i < serviceProviders.length; i++) {
               if (i == index) {

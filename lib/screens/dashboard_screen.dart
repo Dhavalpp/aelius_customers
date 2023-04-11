@@ -1,7 +1,7 @@
-import 'package:aelius_customer/models/user_model.dart';
-import 'package:aelius_customer/screens/reward_point_screen.dart';
-import 'package:aelius_customer/screens/sign_in_screen.dart';
-import 'package:aelius_customer/utils/images.dart';
+import '../models/user_model.dart';
+import '../screens/reward_point_screen.dart';
+import '../screens/sign_in_screen.dart';
+import '../utils/images.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +10,6 @@ import '../fragments/bookings_fragment.dart';
 import '../fragments/home.dart';
 import '../fragments/search_fragment.dart';
 import '../main.dart';
-import '../models/customer_details_model.dart';
 import '../utils/colors.dart';
 import '../utils/shared_pref.dart';
 import '../utils/widget.dart';
@@ -27,7 +26,6 @@ class DashBoardScreen extends StatefulWidget {
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
   DateTime? _currentBackPressTime;
-
   UserModel? userModels;
 
   @override
@@ -36,7 +34,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     super.initState();
     _selectedItem;
     sharePreferenceData();
-    userModels;
   }
 
   final _pageItem = [
@@ -73,10 +70,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             ),
             TextButton(
               child: const Text('Yes'),
-              onPressed: () {
+              onPressed: () async {
+                await SharedPref.setLoggedIn(false);
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => const SignInScreen()),
+                  MaterialPageRoute(builder: (context) => SignInScreen()),
                   (route) => false,
                 );
               },
@@ -281,6 +279,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   drawerIcon: Icons.logout,
                   drawerOnTap: () {
                     SharedPref.setLoggedIn(false);
+                    SharedPref.removeUserModel();
                     Navigator.pop(context);
                     _showLogOutDialog();
                   },

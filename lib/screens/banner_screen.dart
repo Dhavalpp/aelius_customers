@@ -10,7 +10,9 @@ import '../utils/api_list.dart';
 import '../utils/images.dart';
 
 class BannerScreen extends StatefulWidget {
-  const BannerScreen({super.key});
+  String token;
+
+  BannerScreen({super.key, required this.token});
 
   @override
   State<BannerScreen> createState() => _BannerScreenState();
@@ -32,11 +34,15 @@ class _BannerScreenState extends State<BannerScreen> {
             context,
             MaterialPageRoute(builder: (context) => const DashBoardScreen()),
           );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SignInScreen(
+                      token: widget.token,
+                    )),
+          );
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const SignInScreen()),
-        );
       });
     });
   }
@@ -46,27 +52,23 @@ class _BannerScreenState extends State<BannerScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          Container(),
           Positioned.fill(
-            child: AnimatedOpacity(
-              opacity: 0.9,
-              duration: const Duration(milliseconds: 500),
-              child: FutureBuilder<BannerModel>(
-                  future: forntPageBanner(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return FadeInImage(
-                        image: NetworkImage(snapshot.data!.data[0].image),
-                        fit: BoxFit.cover,
-                        placeholder: const AssetImage(banner),
-                      );
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  }),
-            ),
+            child: FutureBuilder<BannerModel>(
+                future: forntPageBanner(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return FadeInImage(
+                      image: NetworkImage(
+                          imagebannerURl + snapshot.data!.data[0].image),
+                      fit: BoxFit.cover,
+                      placeholder: const AssetImage(banner1),
+                    );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }),
           ),
         ],
       ),

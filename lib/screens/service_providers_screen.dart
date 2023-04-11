@@ -11,11 +11,11 @@ import '../utils/colors.dart';
 import '../utils/images.dart';
 
 class ServiceProvidersScreen extends StatefulWidget {
-  final int index;
+  final String categoryName;
   final bool servicesss;
 
   const ServiceProvidersScreen(
-      {Key? key, required this.index, required this.servicesss})
+      {Key? key, required this.categoryName, required this.servicesss})
       : super(key: key);
 
   @override
@@ -38,10 +38,35 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
     });
   }
 
+  Future<int?> fetchCategoryIdByName(String categoryName) async {
+    final response = await http.get(
+      Uri.parse(categoryUrl),
+    );
+
+    if (response.statusCode == 200) {
+      final category = categoryFromJson(response.body);
+      final categoryDatum = category.data.firstWhere(
+        (element) => element.name.toLowerCase() == categoryName.toLowerCase(),
+      );
+
+      return categoryDatum.id;
+    } else {
+      throw Exception('Failed to load categories');
+    }
+  }
+
   Future<void> callSpecificMemberAPI() async {
+    final categoryId = await fetchCategoryIdByName(widget.categoryName);
+    if (categoryId != null) {
+      // do something with categoryId
+      print(categoryId);
+    } else {
+      // handle the case where no category was found with the given name
+    }
+
     var url = Uri.parse(servicesListUrl);
     var response = await http.post(url, body: {
-      'category_id': widget.index.toString(),
+      'category_id': categoryId.toString(),
     });
 
     if (response.statusCode == 200) {
@@ -125,7 +150,8 @@ class _ServiceProvidersScreenState extends State<ServiceProvidersScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                             child: CachedNetworkImage(
-                                              imageUrl: services_list[0].image!,
+                                              imageUrl: imagecategoryURl +
+                                                  services_list[0].image!,
                                               fit: BoxFit.cover,
                                               height: 150,
                                               width: 100,

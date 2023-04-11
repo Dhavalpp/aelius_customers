@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../main.dart';
+import '../models/user_model.dart';
+import '../utils/shared_pref.dart';
 import 'drop_down_menu.dart';
 
 class NewServicesRequestDialog extends StatefulWidget {
@@ -15,12 +17,22 @@ class NewServicesRequestDialog extends StatefulWidget {
 
 class _NewServicesRequestDialogState extends State<NewServicesRequestDialog> {
   bool _isAccepted = false;
+  UserModel? userModels;
+  String customerCategoryArea = "";
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _isAccepted;
+    customerCategoryArea;
+    sharePreferenceData();
+  }
+
+  Future<dynamic> sharePreferenceData() async {
+    UserModel? userData = await SharedPref().getSharedPreferences();
+    setState(() {
+      userModels = userData;
+    });
   }
 
   @override
@@ -47,16 +59,23 @@ class _NewServicesRequestDialogState extends State<NewServicesRequestDialog> {
                         child: DropDownMenu(
                           isregion: false,
                           gender: false,
+                          oncategorySelected: categorySelected,
                         )),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            scheduleBooking("2", "doctor", "2023-08-22",
-                                "11:00", "booking service");
-                            _isAccepted = true;
+                            setState(() {
+                              _isAccepted = true;
+                            });
                             _showNotification();
+                            findnear(
+                                customerCategoryArea,
+                                userModels!.detail[0].pincode,
+                                userModels!.detail[0].areaOfResidenceAdress);
+                            notificationGenrate(
+                                SharedPref().getFCMToken().toString());
                           },
                           child: const Text('ACCEPT'),
                         ),
@@ -64,7 +83,6 @@ class _NewServicesRequestDialogState extends State<NewServicesRequestDialog> {
                         ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
-                            // findnear(category_id, , region)
                           },
                           child: const Text('Cancel'),
                         ),
@@ -112,8 +130,12 @@ class _NewServicesRequestDialogState extends State<NewServicesRequestDialog> {
     await flutterLocalNotificationsPlugin.show(
         014,
         'Your Services is Requested',
-        'Requested services of $categoryUrl',
+        'Requested services of $customerCategoryArea',
         platformChannelSpecifics,
         payload: 'item x');
+  }
+
+  void categorySelected(String? selectedOptions) {
+    selectedOptions = customerCategoryArea;
   }
 }

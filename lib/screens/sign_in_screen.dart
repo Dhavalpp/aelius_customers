@@ -4,7 +4,6 @@ import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import '../custom_widget/space.dart';
 import '../main.dart';
 import '../utils/api_list.dart';
@@ -15,7 +14,9 @@ import '../utils/widget.dart';
 import 'otp_verification_screen.dart';
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({Key? key}) : super(key: key);
+  String? token;
+
+  SignInScreen({Key? key, this.token}) : super(key: key);
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
@@ -271,7 +272,9 @@ class _SignInScreenState extends State<SignInScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const SignUpScreen()));
+                          builder: (context) => SignUpScreen(
+                                token: widget.token,
+                              )));
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

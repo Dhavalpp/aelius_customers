@@ -1,6 +1,4 @@
-// import 'package:country_calling_code_picker/picker.dart';
 import 'dart:io';
-
 import 'package:aelius_customer/screens/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_country_code_picker/fl_country_code_picker.dart';
@@ -8,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
-
 import '../custom_widget/drop_down_menu.dart';
 import '../custom_widget/space.dart';
 import '../main.dart';
@@ -19,7 +16,9 @@ import '../utils/widget.dart';
 import 'otp_verification_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  String? token;
+
+  SignUpScreen({Key? key, this.token}) : super(key: key);
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -29,24 +28,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _signUpFormKey = GlobalKey<FormState>();
 
   final TextEditingController _addressContainer = TextEditingController();
-  final TextEditingController _passController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _companyController = TextEditingController();
   final String gender = '';
   final String category = '';
   final String region = '';
 
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _confirmPassController = TextEditingController();
-  final TextEditingController _bodController = TextEditingController();
   final TextEditingController _refralCode = TextEditingController();
   final TextEditingController _smsController = TextEditingController();
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   bool? agreeWithTeams = false;
-  final bool _securePassword = true;
-  bool _secureConfirmPassword = true;
 
   DateTime _selectedDate = DateTime.now();
 
@@ -70,19 +63,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     showDialCode: true,
     showSearchBar: true,
   );
-
-  @override
-  void dispose() {
-    _passController.dispose();
-    _confirmPassController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    // initCountry();
-    super.initState();
-  }
 
   bool checkPhoneNumber(String phoneNumber) {
     String regexPattern = r'^(?:[+0][1-9])?[0-9]{10,12}$';
@@ -171,6 +151,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         context,
         MaterialPageRoute(
             builder: (context) => OTPVerificationScreen(
+              token: widget.token,
                   verificationIds: verificationIds,
                   isLogin: false,
                   smsController: _smsController,
@@ -182,7 +163,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   addressController: _addressContainer.text,
                   gender: gender,
                   region: region,
-                  date:"${_selectedDate.day}-${_selectedDate.month}-${_selectedDate.year}",
+                  date:
+                      "${_selectedDate.day}-${_selectedDate.month}-${_selectedDate.year}",
                 )),
       );
     }
@@ -318,11 +300,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       keyboardType: TextInputType.phone,
                       textInputAction: TextInputAction.next,
                       inputFormatters: [LengthLimitingTextInputFormatter(10)],
-                      style: TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20),
                       decoration: commonInputDecoration(
                         hintText: "Mobile number",
                         prefixIcon: Padding(
-                          padding: EdgeInsets.only(right: 10),
+                          padding: const EdgeInsets.only(right: 10),
                           child: GestureDetector(
                             onTap: () async {
                               final code = await countryPicker.showPicker(
@@ -399,7 +381,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         DropDownMenu(
                           gender: true,
                           isregion: false,
-                          onOptionSelected: genderSelected,
+                          onGenderSelected: genderSelected,
                         ),
                       ],
                     )),
@@ -410,7 +392,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: _addressContainer,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.visiblePassword,
-                      obscureText: _securePassword,
                       style: const TextStyle(fontSize: 20),
                       decoration: commonInputDecoration(
                         hintText: "Residence Address",
@@ -432,7 +413,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           DropDownMenu(
                             gender: false,
                             isregion: true,
-                            onOptionSelected: regionSelected,
+                            onregionSelected: regionSelected,
                           ),
                         ],
                       ),
@@ -502,11 +483,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const SignInScreen()));
+                                builder: (context) => SignInScreen()));
                       },
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Text("Have an account?",
                               style: TextStyle(fontSize: 16)),
                           Space(4),
@@ -542,7 +523,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final pickedDate = await showDatePicker(
         context: context,
         initialDate: _selectedDate,
-        firstDate: DateTime.now(),
+        firstDate: DateTime(1980),
         lastDate: DateTime(2100));
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {

@@ -19,15 +19,10 @@ const String c_ac_repair = "assets/icons/air_conditioning.png";
 const String c_painter = "assets/icons/painter.png";
 const String c_electrcian = "assets/icons/electrician.png";
 
-
-
-
-
-
 //Images
-const String banner = "assets/images/banner.jpg";
+const String banner1 = "assets/images/banner.jpg";
 const String BannerScreenimage = "assets/images/home_images.jpg";
-const String banner1 = "assets/images/banner1.jpg";
+const String banner = "assets/images/banner1.jpg";
 const String banner2 = "assets/images/banner2.jpg";
 const String cleaning = "assets/images/cleaning.jpg";
 const String home = "assets/images/home.jpg";

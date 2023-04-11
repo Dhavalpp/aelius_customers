@@ -1,13 +1,17 @@
 import 'package:aelius_customer/utils/api_list.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
 import '../models/category.dart';
 import '../models/region_model.dart';
+import '../models/user_model.dart';
+import '../utils/shared_pref.dart';
 
 class DropDownMenu extends StatefulWidget {
   final bool gender;
-  final Function(String?)? onOptionSelected; // add this
+  final Function(String?)? oncategorySelected; // add this
+  final Function(String?)? onregionSelected; // add this
+  final Function(String?)? onGenderSelected; // add this
 
   bool isregion;
 
@@ -15,35 +19,45 @@ class DropDownMenu extends StatefulWidget {
       {super.key,
       required this.isregion,
       required this.gender,
-      this.onOptionSelected});
+      this.oncategorySelected,
+      this.onGenderSelected,
+      this.onregionSelected});
 
   @override
   State<DropDownMenu> createState() => _DropDownMenuState();
 }
 
 class _DropDownMenuState extends State<DropDownMenu> {
-  String _selectedregionItem = 'Rajkot';
-  List<RegionDatum> dropDownregionItems = [
-    // 'Rajkot',
-    // 'Ahmedabad',
-    // 'Surat',
-    // 'Baroda',
-    // 'Jamnagar',
-    // 'Junagadh',
-    // 'Morbi'
-  ];
+  UserModel? userModels;
+  String _selectedregionItem = 'punjab';
+  List<RegionDatum> dropDownregionItems = [];
 
   List<CategoryDatum> categorylist = [];
-  String _selectedCategory = "plumber";
+  String selectedCategory = 'chef';
 
   String _selectedItem = 'Male';
   final List<String> _dropDownItems = ['Male', 'Female', 'Transgender'];
+
+  // List<String> options = [];
+  // String selectedOption;
+
+  Future<dynamic> sharePreferenceData() async {
+    UserModel? userData = await SharedPref().getSharedPreferences();
+    setState(() {
+      userModels = userData;
+      print(userModels!.detail[0].fullName);
+    });
+  }
 
   Future<void> fetchCategorie() async {
     final response = await http.get(Uri.parse(categoryUrl));
     final data = categoryFromJson(response.body);
     setState(() {
       categorylist = data.data;
+      if (kDebugMode) {
+        print(data.data);
+      }
+      selectedCategory = data.data[0].name;
     });
   }
 
@@ -57,9 +71,9 @@ class _DropDownMenuState extends State<DropDownMenu> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchCategorie();
+    fetchRegion();
   }
 
   @override
@@ -67,14 +81,13 @@ class _DropDownMenuState extends State<DropDownMenu> {
     return Container(
       decoration: const BoxDecoration(),
       child: widget.gender == false && widget.isregion == false
-          ? DropdownButton(
-              // hint: const Text('Select a category'),
-              value: _selectedCategory,
+          ? DropdownButton<String>(
+              value: selectedCategory,
               onChanged: (newValue) {
                 setState(() {
-                  _selectedCategory = newValue.toString();
+                  selectedCategory = newValue.toString();
                 });
-                widget.onOptionSelected!(newValue);
+                widget.oncategorySelected!(newValue);
               },
               items: categorylist.isNotEmpty
                   ? categorylist.map((category) {
@@ -92,19 +105,19 @@ class _DropDownMenuState extends State<DropDownMenu> {
             )
           : widget.gender == false && widget.isregion == true
               ? DropdownButton(
-                  // hint: const Text('Select a category'),
+        // hint: const Text('Select a Region'),
                   value: _selectedregionItem,
-                  onChanged: (newValue) {
+        onChanged: (newValues) {
                     setState(() {
-                      _selectedregionItem = newValue.toString();
+                      _selectedregionItem = newValues.toString();
                     });
-                    widget.onOptionSelected!(newValue);
+                    widget.onregionSelected!(newValues);
                   },
                   items: dropDownregionItems.isNotEmpty
-                      ? dropDownregionItems.map((category) {
+                      ? dropDownregionItems.map((region) {
                           return DropdownMenuItem(
-                            value: category.regionTitle,
-                            child: Text(category.regionTitle),
+                            value: region.regionTitle,
+                            child: Text(region.regionTitle),
                           );
                         }).toList()
                       : _dropDownItems
@@ -114,8 +127,9 @@ class _DropDownMenuState extends State<DropDownMenu> {
                               ))
                           .toList(),
                 )
-              : DropdownButton(
+              : DropdownButton<String>(
                   value: _selectedItem,
+                  hint: const Text('Select a Gender'),
                   items: _dropDownItems
                       .map((item) => DropdownMenuItem(
                             value: item,
@@ -127,7 +141,7 @@ class _DropDownMenuState extends State<DropDownMenu> {
                     setState(() {
                       _selectedItem = value.toString();
                     });
-                    widget.onOptionSelected!(value);
+                    widget.onGenderSelected!(value);
                   },
                 ),
     );

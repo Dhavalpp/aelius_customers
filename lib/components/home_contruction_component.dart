@@ -71,7 +71,7 @@ class HomeConstructionComponentState extends State<HomeConstructionComponent> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => ServiceProvidersScreen(
-                                        index: category_list[index].id,
+                                        categoryName: category_list[index].name,
                                         servicesss: false,
                                       )),
                             );
@@ -82,7 +82,8 @@ class HomeConstructionComponentState extends State<HomeConstructionComponent> {
                             child: Row(
                               children: [
                                 CachedNetworkImage(
-                                  imageUrl: category_list[index].file,
+                                  imageUrl: imagecategoryURl +
+                                      category_list[index].file,
                                   fit: BoxFit.cover,
                                   height: 70,
                                   width: 70,
@@ -122,14 +123,13 @@ class HomeConstructionComponentState extends State<HomeConstructionComponent> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => ServiceProvidersScreen(
-                                  index: indexs,
+                              categoryName: category_list[indexs].name,
                                   servicesss: false,
                                 )),
                       );
                     },
                     child: Card(
                       elevation: 3,
-                      color: Colors.teal,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
@@ -141,7 +141,8 @@ class HomeConstructionComponentState extends State<HomeConstructionComponent> {
                             height: 70,
                             width: 70,
                             child: CachedNetworkImage(
-                              imageUrl: category_list[indexs].name,
+                              imageUrl:
+                                  imagecategoryURl + category_list[indexs].file,
                               fit: BoxFit.cover,
                               height: double.infinity,
                               width: double.infinity,

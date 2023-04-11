@@ -25,7 +25,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   double screenHeight = 0.0;
   double screenWidth = 0.0;
-  List<String> bannerList = [banner1, banner2, banner];
+  int bannerSize = 2;
 
   final offerPagesController =
       PageController(viewportFraction: 0.93, keepPage: true, initialPage: 1);
@@ -39,6 +39,7 @@ class _HomeState extends State<Home> {
     // TODO: implement initState
     super.initState();
     sharePreferenceData();
+    bannerSize;
   }
 
   @override
@@ -73,13 +74,16 @@ class _HomeState extends State<Home> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final banners = snapshot.data!.data;
+                    bannerSize = banners.length;
+
                     return PageView.builder(
+                      controller: offerPagesController,
                       itemCount: banners.length,
                       itemBuilder: (context, index) {
                         final banner = banners[index];
                         return Center(
                           child: CachedNetworkImage(
-                            imageUrl: banner.image,
+                            imageUrl: imagebannerURl + banner.image,
                             fit: BoxFit.cover,
                             height: double.infinity,
                             width: double.infinity,
@@ -105,7 +109,7 @@ class _HomeState extends State<Home> {
 
             SmoothPageIndicator(
               controller: offerPagesController,
-              count: 3,
+              count: bannerSize,
               effect: ExpandingDotsEffect(
                 dotHeight: 7,
                 dotWidth: 8,

@@ -1,13 +1,11 @@
-import 'dart:developer';
-
 import 'package:aelius_customer/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-
 import 'components/my_scroll_behaviour.dart';
 import 'store/appData.dart';
 import 'utils/colors.dart';
@@ -21,26 +19,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackground);
-//   SystemChrome.setPreferredOrientations(
-//       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  AndroidInitializationSettings androidSetting =
-      const AndroidInitializationSettings('@mipmap/ic_launcher');
-  DarwinInitializationSettings iosSetting = const DarwinInitializationSettings(
-    requestBadgePermission: true,
-    requestCriticalPermission: true,
-    requestSoundPermission: true,
-    requestAlertPermission: true,
-  );
-  InitializationSettings initializationSettings =
-      InitializationSettings(iOS: iosSetting, android: androidSetting);
-
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-  bool? initilized =
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-  log("Notification: $initilized");
-
   runApp(const MyApp());
 }
 
@@ -48,8 +26,6 @@ Future<void> main() async {
 Future<void> _firebaseMessagingBackground(RemoteMessage message) async {
   await Firebase.initializeApp();
   print(message.notification!.title.toString());
-  print(message.notification!.body.toString());
-  print(message.data.toString());
 }
 
 class MyApp extends StatelessWidget {
@@ -64,7 +40,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: appName,
           theme: ThemeData.light().copyWith(
-            colorScheme: ColorScheme(
+            colorScheme: const ColorScheme(
               brightness: Brightness.light,
               primary: primaryColor,
               onPrimary: whiteColor,
